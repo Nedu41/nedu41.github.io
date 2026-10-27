@@ -1,16 +1,145 @@
 <!doctype html>
 <html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Projeler</title>
+<title>Projelerim</title>
+<meta name="theme-color" content="#060607">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <style>
-:root{--bg:#0b0b0d;--card:#151518;--line:#2a2a30;--txt:#d8d8de;--dim:#8a8a94;--acc:#7fd8e8}
-body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,sans-serif}
-main{max-width:520px;margin:0 auto;padding:24px 16px}
-h1{font-size:20px;color:var(--acc);font-weight:600}
-a.card{display:block;background:var(--card);border:2px solid var(--line);border-radius:10px;padding:14px 16px;margin:12px 0;color:var(--txt);text-decoration:none}
-a.card:hover{border-color:var(--acc)}
-small{color:var(--dim)}
+/* === PANO TEMASI (ESP32 web_ui.h ve Sudepo main.cpp handleCSS AYNI blok - birini degistirince digerini de guncelle) ===
+   Eski, koyu boyali elektrik panosu: lekeli boya + pas izi + citik + gren + kenar kararmasi; kartlar cerceve+civata plakasi, basliklar yaslanmis etiket. */
+:root,.dark{--bg:#060607;--card:#0b0c0f;--text:#e5e7eb;--muted:#9ca3af;--border:#3a3f48;--border-strong:#5b616c;--primary:#60a5fa;--accent:#34d399;--warn:#fbbf24;--danger:#f87171;--danger-bg:#3a2222;--danger-bg-t:rgba(58,34,34,.6);--tab-bg:#101216;--shadow:0 2px 8px rgba(0,0,0,.8);--grid-dot:rgba(150,160,180,.05)}
+body{color-scheme:dark;background-color:#08090a;background-attachment:fixed;background-image:radial-gradient(ellipse at 50% 38%,rgba(0,0,0,0) 30%,rgba(0,0,0,.85) 100%),linear-gradient(180deg,rgba(150,72,26,.30),rgba(150,72,26,0) 42%) 7% 0/5px 100% no-repeat,linear-gradient(180deg,rgba(150,72,26,.22),rgba(150,72,26,0) 42%) 23% 0/3px 100% no-repeat,linear-gradient(180deg,rgba(150,72,26,.26),rgba(150,72,26,0) 42%) 58% 0/6px 100% no-repeat,linear-gradient(180deg,rgba(150,72,26,.28),rgba(150,72,26,0) 42%) 81% 0/4px 100% no-repeat,linear-gradient(180deg,rgba(150,72,26,.2),rgba(150,72,26,0) 42%) 94% 0/3px 100% no-repeat,repeating-linear-gradient(118deg,transparent 0 170px,rgba(255,255,255,.05) 171px,transparent 173px,transparent 310px,rgba(255,255,255,.035) 311px,transparent 312px),url('data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27700%27%20height%3D%27700%27%3E%3Cfilter%20id%3D%27n%27%3E%3CfeTurbulence%20type%3D%27fractalNoise%27%20baseFrequency%3D%27.007%27%20numOctaves%3D%273%27%20stitchTiles%3D%27stitch%27%2F%3E%3CfeColorMatrix%20values%3D%270%200%200%200%20.75%20%200%200%200%200%20.78%20%200%200%200%200%20.85%20%201.1%200%200%200%20-.38%27%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%27100%25%27%20height%3D%27100%25%27%20filter%3D%27url%28%23n%29%27%2F%3E%3C%2Fsvg%3E'),url('data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27500%27%20height%3D%27500%27%3E%3Cfilter%20id%3D%27n%27%3E%3CfeTurbulence%20type%3D%27fractalNoise%27%20baseFrequency%3D%27.012%27%20numOctaves%3D%273%27%20stitchTiles%3D%27stitch%27%2F%3E%3CfeColorMatrix%20values%3D%270%200%200%200%200%20%200%200%200%200%200%20%200%200%200%200%200%20%201.3%200%200%200%20-.55%27%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%27100%25%27%20height%3D%27100%25%27%20filter%3D%27url%28%23n%29%27%2F%3E%3C%2Fsvg%3E'),url('data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27160%27%20height%3D%27160%27%3E%3Cfilter%20id%3D%27n%27%3E%3CfeTurbulence%20type%3D%27fractalNoise%27%20baseFrequency%3D%27.9%27%20numOctaves%3D%272%27%20stitchTiles%3D%27stitch%27%2F%3E%3CfeColorMatrix%20values%3D%270%200%200%200%201%20%200%200%200%200%201%20%200%200%200%200%201%20%200%200%200%20.16%200%27%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%27100%25%27%20height%3D%27100%25%27%20filter%3D%27url%28%23n%29%27%2F%3E%3C%2Fsvg%3E');background-size:auto,auto,auto,auto,auto,auto,700px 700px,500px 500px,160px 160px}
+.card,details.card{background-color:transparent;border-width:4px;border-style:solid;border-top-color:#6a707c;border-right-color:#4b515c;border-bottom-color:#3a3f48;border-radius:6px;box-shadow:0 0 0 2px #000,inset 0 0 0 1px #000,inset 0 2px 0 rgba(255,255,255,.07),inset 0 0 24px rgba(0,0,0,.6),0 5px 14px rgba(0,0,0,.9);background-repeat:no-repeat;background-image:radial-gradient(circle 4.5px at 12px 12px,#a3a9b4 0,#59606c 38%,#16181d 75%,transparent 82%),radial-gradient(circle 4.5px at calc(100% - 12px) 12px,#a3a9b4 0,#59606c 38%,#16181d 75%,transparent 82%),radial-gradient(circle 4.5px at 12px calc(100% - 12px),#a3a9b4 0,#59606c 38%,#16181d 75%,transparent 82%),radial-gradient(circle 4.5px at calc(100% - 12px) calc(100% - 12px),#a3a9b4 0,#59606c 38%,#16181d 75%,transparent 82%)}
+.card h3,.card>summary,details.card>summary{text-transform:uppercase;letter-spacing:1.6px;font-family:Consolas,'DejaVu Sans Mono','Courier New',monospace;font-size:13px;font-weight:700;color:#dcd2ac;text-shadow:0 1px 0 #000,0 0 7px rgba(220,210,172,.18)}
+.card h3{padding-bottom:6px;border-bottom:1px dashed #454a54}
+.btn{padding:10px 12px;border:1px solid #000;border-radius:9px;cursor:pointer;font-weight:600;background-color:#020203;background-image:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,0) 45%,rgba(0,0,0,.4));color:#a3a8b2;box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 1px 2px rgba(0,0,0,.5);transition:transform .08s ease,box-shadow .25s,color .25s;filter:none}
+.btn:active{transform:translateY(2px);box-shadow:inset 0 2px 5px rgba(0,0,0,.6);filter:none}
+/* Kapaliyken TUM butonlar sonuk gri (LED sonuk hissi); anlam tonu (--t) sadece basilirken ve durum acikken (btn-on) yanar: primary/mavi=genel islem, accent/yesil=olumlu, warn/turuncu=dikkat, danger/kirmizi=tehlikeli */
+.btn{color:#7d828c}
+.btn-primary,.btn-mavi{--t:96,165,250}.btn-accent,.btn-yesil{--t:34,230,96}.btn-danger,.btn-kirmizi{--t:255,85,85}.btn-warn,.btn-turuncu{--t:255,190,70}
+.btn:active{color:rgb(var(--t,200,205,215));text-shadow:0 0 5px rgb(var(--t,200,205,215)),0 0 12px rgba(var(--t,200,205,215),.6)}
+.btn-primary,.btn-accent,.btn-danger,.btn-warn,.btn-yesil,.btn-turuncu,.btn-mavi,.btn-kirmizi{background-color:#020203}
+/* Durum (acik/aktif): zemin siyah, yazi + cevre --t tonunda neon, yavasca nefes alir. Varsayilan yesil; ton-kirmizi=tehlike aktif, ton-amber=uyari durumu, ton-mavi=bilgi/bahce kapisi */
+.btn.btn-on{--t:34,230,96;font-weight:800;color:rgb(var(--t));text-shadow:0 0 4px rgb(var(--t)),0 0 10px rgba(var(--t),.8),0 0 20px rgba(var(--t),.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 0 6px 1px rgba(var(--t),.6),0 0 22px 5px rgba(var(--t),.35);animation:btnNefes 3.6s ease-in-out infinite}
+.btn.btn-on.ton-kirmizi{--t:255,85,85}.btn.btn-on.ton-amber{--t:255,190,70}.btn.btn-on.ton-mavi{--t:70,150,255}.btn.btn-on.sabit{animation:none}
+@keyframes btnNefes{50%{box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 0 5px 1px rgba(var(--t),.45),0 0 16px 3px rgba(var(--t),.22);text-shadow:0 0 3px rgb(var(--t)),0 0 7px rgba(var(--t),.7),0 0 14px rgba(var(--t),.5)}}
+@media(prefers-reduced-motion:reduce){.btn.btn-on{animation:none}}
+.nav,.sekmeler,.dark .sekmeler{background:rgba(5,5,6,.35)}
+body .nav button,body .sekme-btn{background:transparent;border:1px solid #3a3f48;color:#a3a8b2;box-shadow:none}
+body .nav button.active,body .sekme-btn.aktif{background:transparent;color:#9ec3f5;border-color:#60a5fa;text-shadow:0 0 6px rgba(96,165,250,.8);box-shadow:0 0 8px rgba(96,165,250,.45)}
+input,select,.input,textarea{background:#060708;border:1px solid #3a3f48;color:#e5e7eb}
+.tema-btn{display:none}
+/* === /PANO TEMASI === */
+
+/* === Portal === */
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text)}
+main{max-width:560px;margin:0 auto;padding:18px 16px 40px}
+.ust{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px}
+.ust h1{font-size:20px;margin:0;color:#dcd2ac;letter-spacing:.5px}
+.meta{font-size:12px;color:var(--muted)}
+.card{display:block;padding:16px 26px;margin:14px 0;color:var(--text);text-decoration:none}
+.kbas{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.kbas b{font-size:16px;flex:1}
+.led{width:12px;height:12px;border-radius:50%;background:#3a3f48;box-shadow:inset 0 0 2px #000;flex:none}
+.led.iyi{background:#22e660;box-shadow:0 0 6px #22e660,0 0 14px rgba(34,230,96,.6)}
+.led.kotu{background:#ff5555;box-shadow:0 0 6px #ff5555,0 0 14px rgba(255,85,85,.6)}
+.satir{display:flex;align-items:center;gap:8px;font-size:14px;padding:3px 0}
+.satir .et{width:118px;color:var(--muted)}
+.satir .dg{font-variant-numeric:tabular-nums}
+.bos{visibility:hidden}
+.btn{padding:4px 12px;font-size:12px}
 </style></head><body><main>
-<h1>Projeler</h1>
-<a class="card" href="ev-lamba/">Ev Lamba<br><small>Lambaları uzaktan kontrol</small></a>
-<a class="card" href="kalburum/">Kalburum<br><small>Bahçe sistemi uzaktan izleme</small></a>
-</main></body></html>
+<div class="ust">
+  <h1>Projelerim</h1>
+  <div style="text-align:right"><div class="meta" id="baglanti">Bağlantı yok</div>
+  <button class="btn" id="giris-btn" onclick="girisDegistir()">Giriş</button></div>
+</div>
+
+<a class="card" href="kalburum/">
+  <div class="kbas"><span class="led" id="k-online"></span><b>Kalburum</b><span class="meta" id="k-yas">--</span></div>
+  <div class="satir"><span class="led" id="k-alarm-led"></span><span class="et">Alarm</span><span class="dg" id="k-alarm">--</span></div>
+  <div class="satir"><span class="led bos"></span><span class="et">Depo</span><span class="dg" id="k-depo">--</span></div>
+  <div class="satir"><span class="led bos"></span><span class="et">Akü</span><span class="dg" id="k-aku">--</span></div>
+  <div class="satir"><span class="led bos"></span><span class="et">Ana güç</span><span class="dg" id="k-guc">--</span></div>
+  <div class="satir"><span class="led bos"></span><span class="et">İnternet</span><span class="dg" id="k-net">--</span></div>
+</a>
+
+<a class="card" href="ev-lamba/">
+  <div class="kbas"><span class="led"></span><b>Ev Lamba</b><span class="meta">canlı veri yok</span></div>
+  <div class="meta">Lamba kontrol sayfası</div>
+</a>
+
+<div class="card">
+  <div class="kbas"><span class="led"></span><b>LED Pano</b><span class="meta">bağlı değil</span></div>
+</div>
+</main>
+<script src="https://unpkg.com/mqtt@4.3.7/dist/mqtt.min.js"></script>
+<script>
+// Ortak HiveMQ Cloud kumesi. Giris bilgisi kalburum/ sayfasiyla AYNI anahtarlarda
+// (ayni origin -> ayni localStorage), bir kez girilir.
+const URL_MQ='wss://ada26fe32e6b479ebfbc51cb380a6514.s1.eu.hivemq.cloud:8884/mqtt';
+const $=s=>document.querySelector(s);
+function lsAl(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function lsYaz(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+let mq=null,kalp=null,kSon=0,kOnline=null;
+
+function yaz(id,t){const e=$(id);if(e)e.textContent=t;}
+function led(id,durum){const e=$(id);if(!e)return;e.classList.remove('iyi','kotu');if(durum)e.classList.add(durum);}
+function sayi(v,ek,h){return (typeof v==='number'&&isFinite(v)&&v!==0)?v.toFixed(h)+ek:'--';}
+
+function kalburumIsle(d){
+  const a=d.alarm||{},k=d.konteyner||{};
+  const tetik=a.panic||(a.enabled&&a.trigger_mask)||a.pending||k.gaz||k.duman||k.swan_alarm;
+  yaz('#k-alarm',a.panic?'PANİK':tetik?'Tetiklendi':(a.enabled||k.enabled)?'Kurulu':'Kapalı');
+  led('#k-alarm-led',tetik?'kotu':null);
+  yaz('#k-depo',d.esp8266_online&&!d.sensor_err?sayi(d.level_percent,' %',0):'--');
+  yaz('#k-aku',(d.battery&&d.battery.online)?sayi(d.battery.voltage,' V',1):'--');
+  yaz('#k-guc',(d.ana_guc&&d.ana_guc.ok)?sayi(d.ana_guc.volt,' V',1):'--');
+  yaz('#k-net',d.net_ay_bayt!=null?((d.net_ay_bayt/1048576).toFixed(1)+' MB / 5 GB'):'--');
+}
+function etiket(){
+  if(!mq||!mq.connected){led('#k-online',null);yaz('#k-yas','--');return;}
+  const yas=kSon?Math.round((Date.now()-kSon)/1000):null;
+  led('#k-online',kOnline===false?'kotu':(kOnline&&yas!=null&&yas<1200)?'iyi':null);
+  yaz('#k-yas',kOnline===false?'çevrimdışı':yas==null?'veri bekleniyor':yas<120?yas+' sn önce':Math.round(yas/60)+' dk önce');
+}
+setInterval(etiket,5000);
+
+function baglan(){
+  let u=lsAl('uzakKullanici'),p=lsAl('uzakSifre');
+  if(!u||!p){
+    u=prompt('HiveMQ kullanıcı adı',u||''); if(!u) return;
+    p=prompt('HiveMQ şifresi'); if(!p) return;
+    lsYaz('uzakKullanici',u); lsYaz('uzakSifre',p);
+  }
+  if(typeof mqtt==='undefined'){yaz('#baglanti','MQTT kütüphanesi yüklenemedi');return;}
+  yaz('#baglanti','Bağlanıyor...');
+  mq=mqtt.connect(URL_MQ,{username:u,password:p,clientId:'portal-'+Math.random().toString(16).slice(2,10),reconnectPeriod:5000,connectTimeout:10000});
+  mq.on('connect',()=>{
+    yaz('#baglanti','Bağlı: '+u); $('#giris-btn').textContent='Çıkış';
+    mq.subscribe(['kalburum/durum','kalburum/online']);
+    mq.publish('kalburum/izleyici','1');
+    if(!kalp) kalp=setInterval(()=>{if(mq&&mq.connected)mq.publish('kalburum/izleyici','1');},20000);
+  });
+  mq.on('message',(t,m)=>{
+    const s=m.toString();
+    if(t==='kalburum/online'){kOnline=(s==='1');}
+    else if(t==='kalburum/durum'){kSon=Date.now();try{kalburumIsle(JSON.parse(s));}catch(e){}}
+    etiket();
+  });
+  mq.on('error',e=>{
+    const m=String(e&&e.message||e); yaz('#baglanti','Hata: '+m);
+    if(/auth|Not authorized|Bad user/i.test(m)){lsYaz('uzakSifre','');kes();}
+  });
+  mq.on('close',etiket);
+}
+function kes(){if(kalp){clearInterval(kalp);kalp=null;}if(mq){mq.end(true);mq=null;}$('#giris-btn').textContent='Giriş';etiket();}
+function girisDegistir(){
+  if(mq){ if(confirm('Çıkış yapılsın mı? (kayıtlı şifre silinir)')){lsYaz('uzakSifre','');kes();yaz('#baglanti','Bağlantı yok');} }
+  else baglan();
+}
+baglan();
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body></html>
