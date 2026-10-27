@@ -1669,8 +1669,12 @@ setInterval(uzakEtiket,5000);
 function uzakBaglan(){
   let u=lsAl('uzakKullanici'),p=lsAl('uzakSifre');
   if(!u||!p){
-    u=prompt('Uzak bağlantı - HiveMQ kullanıcı adı',u||''); if(!u){modAyarla(false);return;}
-    p=prompt('Uzak bağlantı - HiveMQ şifresi'); if(!p){modAyarla(false);return;}
+    // Iptal: yerel sayfada Yerel'e don; https'te (Uzak zorunlu) sadece bekle -
+    // ONCEDEN modAyarla(false) zorunlu modda tekrar uzakBaglan'i cagirip
+    // giris penceresini sonsuz donguye sokuyordu (saha bulgusu 2026-10-27).
+    const iptal=()=>{ if(UZAK_ZORUNLU) uzakDurumYaz('Uzak: giriş yapılmadı - Uzak düğmesine basıp tekrar dene'); else modAyarla(false); };
+    u=prompt('Uzak bağlantı - HiveMQ kullanıcı adı',u||''); if(!u){iptal();return;}
+    p=prompt('Uzak bağlantı - HiveMQ şifresi'); if(!p){iptal();return;}
     lsYaz('uzakKullanici',u); lsYaz('uzakSifre',p);
   }
   uzakDurumYaz('Uzak: bağlanıyor...');
@@ -1709,6 +1713,7 @@ function modAyarla(uzak){
 }
 function modDegistir(){
   if(UZAK_ZORUNLU){
+    if(!_mq){ uzakBaglan(); return; } // giris yapilmamissa tekrar sor
     if(confirm('Uzak bağlantı bilgileri sıfırlansın mı?')){ lsYaz('uzakSifre',''); uzakKes(); uzakBaglan(); }
     return;
   }
@@ -2438,7 +2443,7 @@ function wifiGecmisYukle(){
   fetch('/api/wifi/gecmis').then(r=>r.json()).then(list=>{
     const el=$('#wifi-gecmis-kutu'); if(!el) return;
     if(!Array.isArray(list)||list.length===0){ el.innerHTML='<span style="color:var(--muted);font-size:12px">Kayıtlı ağ yok.</span>'; return; }
-    el.innerHTML = list.map(a=>'<div class="row" style="align-items:center"><span style="flex:1">'+a.ssid+'</span><button class="btn btn-primary" onclick="wifiGecmisBagla('+a.idx+')">Bağlan</button><button class="btn btn-danger" onclick="wifiGecmisSil('+a.idx+')">Sil</button></div>').join('');
+    el.innerHTML = list.map(a=>'<div class="row" style="align-items:center"><span style="flex:1">'+a.ssid+'</span>'+(a.etiket?'<span style="color:var(--muted);font-size:12px">'+a.etiket+'</span>':'<button class="btn btn-primary" onclick="wifiGecmisBagla('+a.idx+')">Bağlan</button><button class="btn btn-danger" onclick="wifiGecmisSil('+a.idx+')">Sil</button>')+'</div>').join('');
   }).catch(()=>{});
 }
 function wifiGecmisBagla(idx){
