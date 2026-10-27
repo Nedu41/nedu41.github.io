@@ -1645,7 +1645,7 @@ function internetYukle(){
 // Faz 1: sadece izleme - uzak modda komutlar kapali.
 const UZAK_URL='wss://ada26fe32e6b479ebfbc51cb380a6514.s1.eu.hivemq.cloud:8884/mqtt';
 const UZAK_ZORUNLU=location.protocol==='https:';
-let uzakMod=false,_mq=null,_mqKalp=null,_uzakSonVeri=0,_uzakOnline=null;
+let uzakMod=false,_mq=null,_mqKalp=null,_uzakSonVeri=0,_uzakOnline=null,_uzakSonIp=null;
 function lsAl(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function lsYaz(k,v){try{localStorage.setItem(k,v);}catch(e){}}
 function uzakDurumYaz(t){const e=$('#uzak-durum');if(e)e.textContent=t;}
@@ -1686,7 +1686,9 @@ function uzakBaglan(){
       const s=m.toString();
       if(t==='kalburum/online'){ _uzakOnline=(s==='1'); uzakEtiket(); return; }
       _uzakSonVeri=Date.now();
-      if(!herhangiBirAlanaYaziliyorMu()){ try{renderUI(JSON.parse(s));}catch(e){} }
+      let d=null; try{ d=JSON.parse(s); }catch(e){}
+      if(d && d.wifi_baglibi && d.wifi_ip) _uzakSonIp=d.wifi_ip;
+      if(d && !herhangiBirAlanaYaziliyorMu()){ try{renderUI(d);}catch(e){} }
       uzakEtiket();
     });
     _mq.on('error',e=>{
@@ -1707,14 +1709,16 @@ function modAyarla(uzak){
   if(UZAK_ZORUNLU) uzak=true;
   uzakMod=uzak; lsYaz('uzakMod',uzak?'1':'0');
   const b=$('#mod-btn');
-  if(b){ b.textContent=uzak?'Uzak':'Yerel'; b.classList.toggle('btn-on',uzak); b.classList.toggle('ton-mavi',uzak); }
+  if(b){ b.textContent=UZAK_ZORUNLU?'Yerele geç':(uzak?'Uzak':'Yerel'); b.classList.toggle('btn-on',uzak&&!UZAK_ZORUNLU); b.classList.toggle('ton-mavi',uzak&&!UZAK_ZORUNLU); }
   if(uzak){ if(_es){_es.close();_es=null;} if(!_mq) uzakBaglan(); }
   else { uzakKes(); uzakDurumYaz(''); connectSSE(); guncelle(); }
 }
 function modDegistir(){
   if(UZAK_ZORUNLU){
-    if(!_mq){ uzakBaglan(); return; } // giris yapilmamissa tekrar sor
-    if(confirm('Uzak bağlantı bilgileri sıfırlansın mı?')){ lsYaz('uzakSifre',''); uzakKes(); uzakBaglan(); }
+    // https sayfasi yerel API'ye erisemez -> Kalburum'un kendi yerel sayfasina git
+    // (son bilinen IP - hotspot'ta .local cozulmeyebilir; yoksa kalburum.local).
+    // Giris bilgisi sifirlama portaldaki Cikis'ta.
+    location.href='http://'+(_uzakSonIp||'kalburum.local')+'/';
     return;
   }
   modAyarla(!uzakMod);
@@ -2443,7 +2447,7 @@ function wifiGecmisYukle(){
   fetch('/api/wifi/gecmis').then(r=>r.json()).then(list=>{
     const el=$('#wifi-gecmis-kutu'); if(!el) return;
     if(!Array.isArray(list)||list.length===0){ el.innerHTML='<span style="color:var(--muted);font-size:12px">Kayıtlı ağ yok.</span>'; return; }
-    el.innerHTML = list.map(a=>'<div class="row" style="align-items:center"><span style="flex:1">'+a.ssid+'</span>'+(a.etiket?'<span style="color:var(--muted);font-size:12px">'+a.etiket+'</span>':'<button class="btn btn-primary" onclick="wifiGecmisBagla('+a.idx+')">Bağlan</button><button class="btn btn-danger" onclick="wifiGecmisSil('+a.idx+')">Sil</button>')+'</div>').join('');
+    el.innerHTML = list.map(a=>'<div class="row" style="align-items:center"><span style="flex:1">'+a.ssid+'</span>'+(a.etiket?'<span style="color:var(--muted);font-size:12px">'+a.etiket+'</span>':'')+'<button class="btn btn-primary" onclick="wifiGecmisBagla('+a.idx+')">Bağlan</button>'+(a.etiket?'':'<button class="btn btn-danger" onclick="wifiGecmisSil('+a.idx+')">Sil</button>')+'</div>').join('');
   }).catch(()=>{});
 }
 function wifiGecmisBagla(idx){
