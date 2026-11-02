@@ -178,6 +178,11 @@ details.card:not(.zone-sudepo):not(.zone-konteyner):nth-of-type(12){border-left:
 .nav{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;position:sticky;top:0;z-index:100;padding:8px 0;background:rgba(4,4,5,.5);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .nav button{padding:8px 12px;border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:8px;cursor:pointer}
 .nav button.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+/* Diger Projeler acilir listesi (ev-lamba HUB ile ayni) */
+.diger-menu{display:none;position:absolute;right:0;top:100%;flex-direction:column;gap:6px;padding:10px;background:#060708;border:1px solid #3a3f48;border-radius:6px;box-shadow:0 5px 14px rgba(0,0,0,.9);z-index:101}
+.diger-menu.acik{display:flex}
+.diger-menu a{display:block;padding:6px 12px;border:1px solid #3a3f48;border-radius:6px;color:#a3a8b2;text-decoration:none}
+.diger-menu a:active{color:#9ec3f5;border-color:#60a5fa}
 .alert{padding:10px;border-radius:8px;background:rgba(239,68,68,.15);color:var(--danger);border:1px solid rgba(239,68,68,.3);margin-bottom:10px}
 .badge{display:inline-block;padding:4px 8px;border-radius:999px;background:rgba(16,185,129,.15);color:var(--accent);font-weight:700;font-size:12px}
 </style>
@@ -207,6 +212,8 @@ details.card:not(.zone-sudepo):not(.zone-konteyner):nth-of-type(12){border-left:
     <button onclick="show('kumanda')" id="nav-kumanda">Kumanda</button>
     <button onclick="show('invertor')" id="nav-invertor">İnvertör</button>
     <button onclick="show('bilgiler')" id="nav-bilgiler">Bilgiler</button>
+    <button onclick="digerAc(event)" id="nav-diger">Diğer Projeler</button>
+    <div id="digerMenu" class="diger-menu"><a href="https://nedu41.github.io">Portal (uzaktan izleme)</a><a href="http://merkezihub.local">Merkezi HUB (ev lambaları)</a><a href="http://sudepo.local">Sudepo (su deposu)</a></div>
   </div>
 
   <div id="dashboard" class="section active">
@@ -865,7 +872,7 @@ details.card:not(.zone-sudepo):not(.zone-konteyner):nth-of-type(12){border-left:
       <summary>Sürüm geçmişi</summary>
       <div style="font-size:13px;line-height:1.5;margin:8px 0">
         <b>Geliştirmede</b> (v1.0.1 sonrası, henüz sürüm numarası yok)
-        <ul style="padding-left:18px;margin:4px 0 8px"><li>Standart 1 pano teması (Kalburum + Sudepo ortak)</li><li>WiFi: kurulum ağı varsayılan kapalı, en güçlü kayıtlı ağa bağlanma, saatin RS485 ile paylaşımı</li><li>Alarm sekmesi (toplu alarm kontrolü)</li><li>LED panelle otomatik tanışma</li><li>Yedek akü ölçümünde sıçrama giderildi; WiFi bağlanınca Telegram IP bildirimi</li><li>Bilgiler sekmesine özellikler, kullanım, sürüm geçmişi</li><li>Ortak WiFi yokken (bahçe) panik/susturma/onay/mod/lamba komutları RS485 ile gidiyor; saat telefondan alınıp Sudepo'ya iletiliyor</li><li>Kısıtlı data hattı için Telegram buton kontrolü yalnız alarm sırasında ve sonraki 15 dk; hava durumu günde 3 kez</li><li>Bilgiler → İnternet Kullanımı: günlük + paket dönemi (27'si yenilenir) tahmini veri sayacı</li></ul>
+        <ul style="padding-left:18px;margin:4px 0 8px"><li>Uzaktan kontrol: portaldan Kalburum butonları çalışır (imzalı komut; kapı/alarm/panik onay ister; her komut Telegram'a bildirilir)</li><li>Uzak izleme EMQX Cloud'a taşındı (HiveMQ kapanıyor)</li><li>Menüde Diğer Projeler (Portal, Merkezi HUB, Sudepo)</li><li>Standart 1 pano teması (Kalburum + Sudepo ortak)</li><li>WiFi: kurulum ağı varsayılan kapalı, en güçlü kayıtlı ağa bağlanma, saatin RS485 ile paylaşımı</li><li>Alarm sekmesi (toplu alarm kontrolü)</li><li>LED panelle otomatik tanışma</li><li>Yedek akü ölçümünde sıçrama giderildi; WiFi bağlanınca Telegram IP bildirimi</li><li>Bilgiler sekmesine özellikler, kullanım, sürüm geçmişi</li><li>Ortak WiFi yokken (bahçe) panik/susturma/onay/mod/lamba komutları RS485 ile gidiyor; saat telefondan alınıp Sudepo'ya iletiliyor</li><li>Kısıtlı data hattı için Telegram buton kontrolü yalnız alarm sırasında ve sonraki 15 dk; hava durumu günde 3 kez</li><li>Bilgiler → İnternet Kullanımı: günlük + paket dönemi (27'si yenilenir) tahmini veri sayacı</li></ul>
         <b>v1.0.1</b> <small>2026-09-27</small>
         <ul style="padding-left:18px;margin:4px 0 8px"><li>Nem oto / manuel düğmesi gerçek modu gösteriyor</li><li>ESP8266 EEPROM kayıt güvenilirliği düzeltmesi</li></ul>
         <b>v1.0.0</b> <small>2026-09-20</small>
@@ -1003,6 +1010,10 @@ details.card:not(.zone-sudepo):not(.zone-konteyner):nth-of-type(12){border-left:
 </div>
 
 <script>
+// Diger Projeler (ust menu) - acilir liste; disari tiklayinca kapanir
+function digerAc(e){ e.preventDefault(); e.stopPropagation(); document.getElementById('digerMenu').classList.toggle('acik'); }
+document.addEventListener('click',()=>{ const m=document.getElementById('digerMenu'); if(m) m.classList.remove('acik'); });
+
 const $=s=>document.querySelector(s);
 
 // === SERVER TRUTH MODEL ===
