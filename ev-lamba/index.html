@@ -288,7 +288,17 @@
         }
         
         function connectMQTT() {
-            mqttClient = mqtt.connect('wss://broker.hivemq.com:8884/mqtt');
+            // Ozel broker (EMQX Cloud, 2026-11-02): giris portal ile ayni anahtarlarda
+            let u = localStorage.getItem('uzakKullanici'), p = localStorage.getItem('uzakSifre');
+            if (!u || !p) {
+                u = prompt('MQTT kullanıcı adı', u || ''); if (!u) return;
+                p = prompt('MQTT şifresi'); if (!p) return;
+                localStorage.setItem('uzakKullanici', u); localStorage.setItem('uzakSifre', p);
+            }
+            mqttClient = mqtt.connect('wss://h11f4d1a.ala.eu-central-1.emqxsl.com:8084/mqtt', {
+                username: u, password: p,
+                clientId: 'evlamba-' + Math.random().toString(16).slice(2, 10)
+            });
             
             mqttClient.on('connect', function() {
                 document.getElementById('mqttStatus').textContent = 'Bağlandı';
@@ -331,6 +341,10 @@
             
             mqttClient.on('error', function(err) {
                 log(`MQTT hatası: ${err}`);
+                if (/auth|Not authorized|Bad user/i.test(String(err))) {
+                    localStorage.removeItem('uzakSifre'); mqttClient.end(true);
+                    log('Giriş reddedildi - sayfayı yenileyip tekrar girin');
+                }
             });
         }
         
