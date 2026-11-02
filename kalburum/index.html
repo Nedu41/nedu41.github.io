@@ -1642,7 +1642,7 @@ function internetYukle(){
 // Uzak modda veri EMQX Cloud uzerinden gelir (MQTT/WebSocket, Kalburum
 // kalburum/durum'a /api/status ile AYNI JSON'u yayinlar -> ayni renderUI).
 // Sayfa https'ten (GitHub Pages) aciliyorsa yerel API'ye erisilemez -> hep uzak.
-// Faz 1: sadece izleme - uzak modda komutlar kapali.
+// Uzak kontrol (2026-11-02): komut kalburum/komut'a imzali gider (bkz uzakKomut), cevap kalburum/yanit/<id>.
 const UZAK_URL='wss://h11f4d1a.ala.eu-central-1.emqxsl.com:8084/mqtt';
 const UZAK_ZORUNLU=location.protocol==='https:';
 let uzakMod=false,_mq=null,_mqKalp=null,_uzakSonVeri=0,_uzakOnline=null,_uzakSonIp=null;
@@ -1681,9 +1681,10 @@ function uzakBaglan(){
   mqttYukle().then(()=>{
     if(!uzakMod) return;
     _mq=mqtt.connect(UZAK_URL,{username:u,password:p,clientId:'web-'+Math.random().toString(16).slice(2,10),reconnectPeriod:5000,connectTimeout:10000});
-    _mq.on('connect',()=>{ _mq.subscribe(['kalburum/durum','kalburum/online']); uzakKalp(); uzakEtiket(); });
+    _mq.on('connect',()=>{ _mq.subscribe(['kalburum/durum','kalburum/online','kalburum/yanit/+']); uzakKalp(); uzakEtiket(); });
     _mq.on('message',(t,m)=>{
       const s=m.toString();
+      if(t.startsWith('kalburum/yanit/')){ const f=_uzakBekleyen[t.slice(15)]; if(f){ delete _uzakBekleyen[t.slice(15)]; let d=null; try{d=JSON.parse(s);}catch(e){} f(d||{basarili:false,mesaj:s}); } return; }
       if(t==='kalburum/online'){ _uzakOnline=(s==='1'); uzakEtiket(); return; }
       _uzakSonVeri=Date.now();
       let d=null; try{ d=JSON.parse(s); }catch(e){}
@@ -1723,8 +1724,59 @@ function modDegistir(){
   }
   modAyarla(!uzakMod);
 }
+// ===== UZAK KONTROL (2026-11-02) =====
+// Ayni /api yolu imzali MQTT komutu olarak gider; Kalburum kendi yerel API'sine iletir. Imza anahtari
+// MQTT sifresinden AYRI (Kalburum secrets.h UZAK_KONTROL_ANAHTARI) - bu tarayicida bir kez sorulur.
+// Kritik yollar ayrica onay ister. Izin listesi Kalburum'daki UZAK_YOLLAR ile ayni (1 = kritik).
+// SHA-256 + HMAC (uzak komut imzasi). crypto.subtle yalniz https'te var; yerel (http) sayfada da calissin diye saf JS.
+const _SHA_K=(()=>{const k=[];let n=2;while(k.length<64){let p=true;for(let d=2;d*d<=n;d++)if(n%d===0){p=false;break;}if(p)k.push((Math.cbrt(n)%1)*4294967296>>>0);n++;}return k;})();
+function _sha256(m){
+  const H=new Uint32Array([0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19]);
+  const l=m.length,nb=((l+72)>>6)<<6,b=new Uint8Array(nb);b.set(m);b[l]=0x80;
+  const dv=new DataView(b.buffer);dv.setUint32(nb-4,(l*8)>>>0);dv.setUint32(nb-8,Math.floor(l/536870912));
+  const w=new Uint32Array(64);
+  for(let o=0;o<nb;o+=64){
+    for(let i=0;i<16;i++)w[i]=dv.getUint32(o+i*4);
+    for(let i=16;i<64;i++){const x=w[i-15],y=w[i-2];w[i]=w[i-16]+(((x>>>7)|(x<<25))^((x>>>18)|(x<<14))^(x>>>3))+w[i-7]+(((y>>>17)|(y<<15))^((y>>>19)|(y<<13))^(y>>>10));}
+    let a=H[0],bb=H[1],c=H[2],d=H[3],e=H[4],f=H[5],g=H[6],h=H[7];
+    for(let i=0;i<64;i++){
+      const t1=(h+(((e>>>6)|(e<<26))^((e>>>11)|(e<<21))^((e>>>25)|(e<<7)))+((e&f)^(~e&g))+_SHA_K[i]+w[i])>>>0;
+      const t2=((((a>>>2)|(a<<30))^((a>>>13)|(a<<19))^((a>>>22)|(a<<10)))+((a&bb)^(a&c)^(bb&c)))>>>0;
+      h=g;g=f;f=e;e=(d+t1)>>>0;d=c;c=bb;bb=a;a=(t1+t2)>>>0;
+    }
+    H[0]+=a;H[1]+=bb;H[2]+=c;H[3]+=d;H[4]+=e;H[5]+=f;H[6]+=g;H[7]+=h;
+  }
+  const out=new Uint8Array(32),od=new DataView(out.buffer);for(let i=0;i<8;i++)od.setUint32(i*4,H[i]);return out;
+}
+function hmacHex(key,msg){
+  const te=new TextEncoder();let k=te.encode(key);if(k.length>64)k=_sha256(k);
+  const ip=new Uint8Array(64),op=new Uint8Array(64);for(let i=0;i<64;i++){const v=i<k.length?k[i]:0;ip[i]=v^0x36;op[i]=v^0x5c;}
+  const mb=te.encode(msg),a=new Uint8Array(64+mb.length);a.set(ip);a.set(mb,64);
+  const ih=_sha256(a),bz=new Uint8Array(96);bz.set(op);bz.set(ih,64);
+  return Array.from(_sha256(bz),x=>x.toString(16).padStart(2,'0')).join('');
+}
+const UZAK_YOLLAR={'/api/lamba':0,'/api/acil-lamba':0,'/api/konteyner/lamba':0,'/api/moisture':0,'/api/moisture/auto':0,
+  '/api/bahce_kapi':1,'/api/alarm':1,'/api/alarm/mod':1,'/api/alarm/mute':1,'/api/alarm/onayla':1,'/api/alarm/onayla_lamba':1,
+  '/api/konteyner/alarm':1,'/api/panic':1};
+let _uzakBekleyen={};
+function uzakKomut(p){
+  const yol=p.split('?')[0];
+  if(!(yol in UZAK_YOLLAR)) return Promise.resolve({basarili:false,mesaj:'Bu işlem uzaktan yapılamaz'});
+  if(!_mq||!_mq.connected) return Promise.resolve({basarili:false,mesaj:'Uzak bağlantı yok'});
+  if(UZAK_YOLLAR[yol] && !confirm('Uzaktan KRİTİK komut:\n'+p.replace('/api/','')+'\n\nGönderilsin mi?')) return Promise.resolve({basarili:false,mesaj:'İptal edildi'});
+  let k=lsAl('kontrolAnahtari');
+  if(!k){ k=prompt('Uzak kontrol anahtarı (bir kez sorulur)'); if(!k) return Promise.resolve({basarili:false,mesaj:'Anahtar girilmedi'}); lsYaz('kontrolAnahtari',k); }
+  const id=Math.random().toString(16).slice(2,10)+(Date.now()%16777216).toString(16);
+  const ts=Math.floor(Date.now()/1000);
+  const sig=hmacHex(k,id+'|'+p+'|'+ts);
+  return new Promise(ok=>{
+    const zm=setTimeout(()=>{ delete _uzakBekleyen[id]; ok({basarili:false,mesaj:'Kalburum cevap vermedi'}); },15000);
+    _uzakBekleyen[id]=d=>{ clearTimeout(zm); if(/imza/i.test(d.mesaj||'')) lsYaz('kontrolAnahtari',''); ok(d); };
+    _mq.publish('kalburum/komut',JSON.stringify({id,p,ts,sig}));
+  });
+}
 function api(p){
-  if(uzakMod) return Promise.resolve({basarili:false,mesaj:'Uzak modda kontrol henüz kapalı'});
+  if(uzakMod) return uzakKomut(p);
   return fetch(p)
     .then(r=>r.ok?r.json():r.json().catch(()=>({basarili:false,mesaj:'HTTP '+r.status})))
     .catch(()=>({basarili:false,mesaj:'Bağlantı hatası'}));
@@ -1768,7 +1820,7 @@ wsBaglan();
 // hazirsa true donup WS uzerinden gonderir (cagiran HTTP'ye dusmez), degilse
 // false donup cagiran taraf eski sendCommand'a duser.
 function wsKomutGonder(komut, resultId){
-  if(!wsHazir || !wsBaglanti) return false;
+  if(uzakMod || !wsHazir || !wsBaglanti) return false;  // uzak modda komut imzali MQTT ile (api -> uzakKomut)
   wsBekleyenKuyruk.push(resultId);
   wsBaglanti.send(komut);
   return true;
