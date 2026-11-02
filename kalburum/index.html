@@ -693,6 +693,7 @@ details.card:not(.zone-sudepo):not(.zone-konteyner):nth-of-type(12){border-left:
       <summary>Sistem</summary>
       <div class="row">
         <button class="btn btn-danger" onclick="restartSistem()">Yeniden Başlat</button>
+        <button class="btn btn-danger" onclick="sudepoRestart()">Sudepo'yu Yeniden Başlat</button>
       </div>
       <p style="font-size:12px;color:var(--muted);margin:12px 0 6px;">RS485 hattına (Sudepo/ESP8266) tek seferlik GET_STATUS gönderip cevap gelip gelmediğini kontrol eder - "MAX485 kopuk mu" şüphesinde önce burayı dene.</p>
       <div class="row">
@@ -873,7 +874,7 @@ details.card:not(.zone-sudepo):not(.zone-konteyner):nth-of-type(12){border-left:
       <summary>Sürüm geçmişi</summary>
       <div style="font-size:13px;line-height:1.5;margin:8px 0">
         <b>Geliştirmede</b> (v1.0.1 sonrası, henüz sürüm numarası yok)
-        <ul style="padding-left:18px;margin:4px 0 8px"><li>Bekçi (yazılım watchdog): ana döngü 60 sn ya da uzak bağlantı görevi 3 dk takılırsa kendini yeniden başlatır; sebebi Telegram açılış mesajında; internet bağlantılarında el sıkışma süresi 120 sn → 20 sn</li><li>Uzaktan yeniden başlatma (portal, imzalı ve onaylı; Telegram bildirimi)</li><li>WiFi koparsa her iki denemeden biri KalPot, deneme aralığı en fazla 1 dk</li><li>Ana sayfa Kontrol kartında Depo Lamba butonu</li><li>Bahçe (Sudepo WiFi'sız): panik, susturma, onay, mod, lamba, alarm, nem ve bahçe kapısı komutları RS485 ile güvenilir gidiyor (panik artık kendiliğinden kapanmıyor); Sudepo WiFi ararken artık donmuyor</li><li>Sudepo'da Bağlantıyı Kes düğmesi (bahçe senaryosu testi)</li><li>Üst barda WiFi çekim gücü (dBm; iyi / orta / zayıf renkli) - Kalburum, Sudepo, Merkezi HUB</li><li>Sudepo RTC'si yanıt vermezse "RTC geçersiz" uyarısı yerine internet saati bilgisi (Sudepo'da Zaman butonu I2C taraması gösterir)</li><li>Uzaktan kontrol: portaldan Kalburum butonları çalışır (imzalı komut; kapı/alarm/panik onay ister; her komut Telegram'a bildirilir)</li><li>Uzak izleme EMQX Cloud'a taşındı (HiveMQ kapanıyor)</li><li>Menüde Diğer Projeler (Portal, Merkezi HUB, Sudepo)</li><li>Standart 1 pano teması (Kalburum + Sudepo ortak)</li><li>WiFi: kurulum ağı varsayılan kapalı, en güçlü kayıtlı ağa bağlanma, saatin RS485 ile paylaşımı</li><li>Alarm sekmesi (toplu alarm kontrolü)</li><li>LED panelle otomatik tanışma</li><li>Yedek akü ölçümünde sıçrama giderildi; WiFi bağlanınca Telegram IP bildirimi</li><li>Bilgiler sekmesine özellikler, kullanım, sürüm geçmişi</li><li>Ortak WiFi yokken (bahçe) panik/susturma/onay/mod/lamba komutları RS485 ile gidiyor; saat telefondan alınıp Sudepo'ya iletiliyor</li><li>Kısıtlı data hattı için Telegram buton kontrolü yalnız alarm sırasında ve sonraki 15 dk; hava durumu günde 3 kez</li><li>Bilgiler → İnternet Kullanımı: günlük + paket dönemi (27'si yenilenir) tahmini veri sayacı</li></ul>
+        <ul style="padding-left:18px;margin:4px 0 8px"><li>Sudepo 5 dk RS485'ten yanıt vermezse Telegram uyarısı (geri gelince bildirim); Ayarlar → Sistem: Sudepo'yu Yeniden Başlat (uzaktan da); Sudepo hattı 5 dk duymazsa kendini bir kez yeniden başlatır</li><li>Bekçi (yazılım watchdog): ana döngü 60 sn ya da uzak bağlantı görevi 3 dk takılırsa kendini yeniden başlatır; sebebi Telegram açılış mesajında; internet bağlantılarında el sıkışma süresi 120 sn → 20 sn</li><li>Uzaktan yeniden başlatma (portal, imzalı ve onaylı; Telegram bildirimi)</li><li>WiFi koparsa her iki denemeden biri KalPot, deneme aralığı en fazla 1 dk</li><li>Ana sayfa Kontrol kartında Depo Lamba butonu</li><li>Bahçe (Sudepo WiFi'sız): panik, susturma, onay, mod, lamba, alarm, nem ve bahçe kapısı komutları RS485 ile güvenilir gidiyor (panik artık kendiliğinden kapanmıyor); Sudepo WiFi ararken artık donmuyor</li><li>Sudepo'da Bağlantıyı Kes düğmesi (bahçe senaryosu testi)</li><li>Üst barda WiFi çekim gücü (dBm; iyi / orta / zayıf renkli) - Kalburum, Sudepo, Merkezi HUB</li><li>Sudepo RTC'si yanıt vermezse "RTC geçersiz" uyarısı yerine internet saati bilgisi (Sudepo'da Zaman butonu I2C taraması gösterir)</li><li>Uzaktan kontrol: portaldan Kalburum butonları çalışır (imzalı komut; kapı/alarm/panik onay ister; her komut Telegram'a bildirilir)</li><li>Uzak izleme EMQX Cloud'a taşındı (HiveMQ kapanıyor)</li><li>Menüde Diğer Projeler (Portal, Merkezi HUB, Sudepo)</li><li>Standart 1 pano teması (Kalburum + Sudepo ortak)</li><li>WiFi: kurulum ağı varsayılan kapalı, en güçlü kayıtlı ağa bağlanma, saatin RS485 ile paylaşımı</li><li>Alarm sekmesi (toplu alarm kontrolü)</li><li>LED panelle otomatik tanışma</li><li>Yedek akü ölçümünde sıçrama giderildi; WiFi bağlanınca Telegram IP bildirimi</li><li>Bilgiler sekmesine özellikler, kullanım, sürüm geçmişi</li><li>Ortak WiFi yokken (bahçe) panik/susturma/onay/mod/lamba komutları RS485 ile gidiyor; saat telefondan alınıp Sudepo'ya iletiliyor</li><li>Kısıtlı data hattı için Telegram buton kontrolü yalnız alarm sırasında ve sonraki 15 dk; hava durumu günde 3 kez</li><li>Bilgiler → İnternet Kullanımı: günlük + paket dönemi (27'si yenilenir) tahmini veri sayacı</li></ul>
         <b>v1.0.1</b> <small>2026-09-27</small>
         <ul style="padding-left:18px;margin:4px 0 8px"><li>Nem oto / manuel düğmesi gerçek modu gösteriyor</li><li>ESP8266 EEPROM kayıt güvenilirliği düzeltmesi</li></ul>
         <b>v1.0.0</b> <small>2026-09-20</small>
@@ -1774,7 +1775,7 @@ function hmacHex(key,msg){
 }
 const UZAK_YOLLAR={'/api/lamba':0,'/api/acil-lamba':0,'/api/konteyner/lamba':0,'/api/moisture':0,'/api/moisture/auto':0,
   '/api/bahce_kapi':1,'/api/alarm':1,'/api/alarm/mod':1,'/api/alarm/mute':1,'/api/alarm/onayla':1,'/api/alarm/onayla_lamba':1,
-  '/api/konteyner/alarm':1,'/api/panic':1,'/api/restart':0};  // restart: restartSistem() zaten onay soruyor
+  '/api/konteyner/alarm':1,'/api/panic':1,'/api/restart':0,'/api/sudepo/restart':0};  // restart: restartSistem() zaten onay soruyor
 let _uzakBekleyen={};
 function uzakKomut(p){
   const yol=p.split('?')[0];
@@ -2547,6 +2548,10 @@ function wifiScan(){
     });
     $('#wifi-sonuc').textContent=(Array.isArray(list)?list.length:0)+' ağ bulundu';
   });
+}
+function sudepoRestart(){
+  if(confirm("Sudepo (ESP8266) RS485 üzerinden yeniden başlatılsın mı?"))
+    api('/api/sudepo/restart').then(d=>{$('#wifi-sonuc').textContent=(d&&d.mesaj)||'Gönderildi';}).catch(()=>{});
 }
 function restartSistem(){
   if(confirm('Yeniden başlatılsın mı?'))
