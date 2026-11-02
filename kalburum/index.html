@@ -1639,11 +1639,11 @@ function internetYukle(){
   });
 }
 // ===== YEREL / UZAK (2026-10-27) =====
-// Uzak modda veri HiveMQ Cloud uzerinden gelir (MQTT/WebSocket, Kalburum
+// Uzak modda veri EMQX Cloud uzerinden gelir (MQTT/WebSocket, Kalburum
 // kalburum/durum'a /api/status ile AYNI JSON'u yayinlar -> ayni renderUI).
 // Sayfa https'ten (GitHub Pages) aciliyorsa yerel API'ye erisilemez -> hep uzak.
 // Faz 1: sadece izleme - uzak modda komutlar kapali.
-const UZAK_URL='wss://ada26fe32e6b479ebfbc51cb380a6514.s1.eu.hivemq.cloud:8884/mqtt';
+const UZAK_URL='wss://h11f4d1a.ala.eu-central-1.emqxsl.com:8084/mqtt';
 const UZAK_ZORUNLU=location.protocol==='https:';
 let uzakMod=false,_mq=null,_mqKalp=null,_uzakSonVeri=0,_uzakOnline=null,_uzakSonIp=null;
 function lsAl(k){try{return localStorage.getItem(k);}catch(e){return null;}}
@@ -1673,8 +1673,8 @@ function uzakBaglan(){
     // ONCEDEN modAyarla(false) zorunlu modda tekrar uzakBaglan'i cagirip
     // giris penceresini sonsuz donguye sokuyordu (saha bulgusu 2026-10-27).
     const iptal=()=>{ if(UZAK_ZORUNLU) uzakDurumYaz('Uzak: giriş yapılmadı - Uzak düğmesine basıp tekrar dene'); else modAyarla(false); };
-    u=prompt('Uzak bağlantı - HiveMQ kullanıcı adı',u||''); if(!u){iptal();return;}
-    p=prompt('Uzak bağlantı - HiveMQ şifresi'); if(!p){iptal();return;}
+    u=prompt('Uzak bağlantı - MQTT kullanıcı adı',u||''); if(!u){iptal();return;}
+    p=prompt('Uzak bağlantı - MQTT şifresi'); if(!p){iptal();return;}
     lsYaz('uzakKullanici',u); lsYaz('uzakSifre',p);
   }
   uzakDurumYaz('Uzak: bağlanıyor...');
