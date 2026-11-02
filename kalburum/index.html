@@ -1672,7 +1672,9 @@ function mqttYukle(){
     document.head.appendChild(s);
   });
 }
-function uzakKalp(){ if(_mq&&_mq.connected) _mq.publish('kalburum/izleyici','1'); }
+// Yalniz sayfa ekrandayken: arka planda unutulan sekme Kalburum'u surekli canli yayinda (5 sn) tutup bahce kotasini yemesin.
+function uzakKalp(){ if(_mq&&_mq.connected&&document.visibilityState==='visible') _mq.publish('kalburum/izleyici','1'); }
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') uzakKalp(); });
 function uzakEtiket(){
   if(!uzakMod) return;
   if(!_mq||!_mq.connected){uzakDurumYaz('Uzak: bağlantı yok');return;}

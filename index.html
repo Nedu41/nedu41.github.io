@@ -84,6 +84,9 @@ function lsAl(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function lsYaz(k,v){try{localStorage.setItem(k,v);}catch(e){}}
 let mq=null,kalp=null,kSon=0,kOnline=null;
 
+// Yalniz sayfa ekrandayken: arka planda unutulan sekme Kalburum'u surekli canli yayinda (5 sn) tutup bahce kotasini yemesin.
+function izleyici(){if(mq&&mq.connected&&document.visibilityState==='visible')mq.publish('kalburum/izleyici','1');}
+document.addEventListener('visibilitychange',izleyici);
 function yaz(id,t){const e=$(id);if(e)e.textContent=t;}
 function led(id,durum){const e=$(id);if(!e)return;e.classList.remove('iyi','kotu');if(durum)e.classList.add(durum);}
 function sayi(v,ek,h){return (typeof v==='number'&&isFinite(v)&&v!==0)?v.toFixed(h)+ek:'--';}
@@ -119,8 +122,8 @@ function baglan(){
   mq.on('connect',()=>{
     yaz('#baglanti','Bağlı: '+u); $('#giris-btn').textContent='Çıkış';
     mq.subscribe(['kalburum/durum','kalburum/online']);
-    mq.publish('kalburum/izleyici','1');
-    if(!kalp) kalp=setInterval(()=>{if(mq&&mq.connected)mq.publish('kalburum/izleyici','1');},20000);
+    izleyici();
+    if(!kalp) kalp=setInterval(izleyici,20000);
   });
   mq.on('message',(t,m)=>{
     const s=m.toString();
