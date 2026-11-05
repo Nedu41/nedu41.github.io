@@ -286,6 +286,8 @@ document.addEventListener("click", () => { const m = document.getElementById("di
         let mqttClient = null;
         let devices = [];
         let rssiCache = {}; // RSSI değerlerini cache'lemek için
+        // Tatil modu: HUB kalıcı dinleyemediği için komutu retained bırakıp aralıklı (≤3 dk) yoklamayla uygular
+        let vac = {}, vacBekle = {}, vacZaman = 0;  // mac -> tatilde mi / komut gönderildi bekleniyor / HUB'ın son durum zamanı
         
         // Ayni sayfa HUB'dan (/mqtt) ve nedu41.github.io/ev-lamba'dan servis edilir (tools/export_mqtt_page.py)
         const REMOTE = location.hostname.endsWith('github.io');
@@ -385,7 +387,8 @@ document.addEventListener("click", () => { const m = document.getElementById("di
                 document.getElementById('mqttStatus').textContent = 'Bağlandı';
                 document.getElementById('mqttStatus').className = 'status connected';
                 log('MQTT bağlandı');
-                
+                mqttClient.subscribe('evlamba/tatil/durum');
+
                 devices.forEach(device => {
                     subscribeDevice(device);
                 });
@@ -394,7 +397,19 @@ document.addEventListener("click", () => { const m = document.getElementById("di
             mqttClient.on('message', function(topic, message) {
                 const msg = message.toString();
                 log(`MQTT: ${topic} = ${msg}`);
-                
+
+                if (topic === 'evlamba/tatil/durum') {
+                    try {
+                        const d = JSON.parse(msg);
+                        vac = {};
+                        (d.cihazlar || []).forEach(c => { vac[c.mac] = !!c.tatil; });
+                        vacZaman = d.zaman || 0;
+                        Object.keys(vacBekle).forEach(m => { if (vac[m] === vacBekle[m]) delete vacBekle[m]; });  // HUB uyguladı
+                        renderDevices();
+                    } catch (e) { log('Tatil durumu okunamadı'); }
+                    return;
+                }
+
                 // RSSI değeri kontrolü
                 if (topic.includes('/status') && msg.includes('wifi_rssi')) {
                     try {
@@ -479,8 +494,14 @@ document.addEventListener("click", () => { const m = document.getElementById("di
                 return;
             }
             
-            let html = '';
-            
+            const tumuTatil = devices.every(d => vac[d.mac] === true);
+            const sonDurum = vacZaman ? new Date(vacZaman * 1000).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) : 'henüz yok';
+            let html = `
+                <div style="display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-bottom:10px">
+                    <small style="color:#888">HUB durumu: ${sonDurum} · komut ≤3 dk içinde uygulanır</small>
+                    ${vacBtn('hepsi', tumuTatil, devices.some(d => d.mac in vacBekle), 'Tam Tatil', 'toggleVacAll()')}
+                </div>`;
+
             devices.forEach(device => {
                 // Bu cihaz için RSSI değerini al
                 const rssi = rssiCache[device.mac] || null;
@@ -529,6 +550,7 @@ document.addEventListener("click", () => { const m = document.getElementById("di
                         </div>
                         
                         <div class="device-actions">
+                            ${vacBtn(device.mac, vac[device.mac] === true, device.mac in vacBekle, 'Tatil', `toggleVac('${device.mac}')`)}
                             <button class="action-btn btn-edit" onclick="editDevice('${device.id}')">Düzenle</button>
                             <button class="action-btn btn-delete" onclick="deleteDevice('${device.id}')">Sil</button>
                             ${device.ip ? `<button class="action-btn btn-check" onclick="checkDevice('${device.id}')">Durum</button>` : ''}
@@ -540,6 +562,40 @@ document.addEventListener("click", () => { const m = document.getElementById("di
             container.innerHTML = html;
         }
         
+        // Açıkken turuncu parlama, kapalıyken gri; komut gönderilmiş ama HUB henüz uygulamadıysa "bekliyor"
+        function vacBtn(id, acik, bekliyor, ad, onclick) {
+            const stil = acik
+                ? 'background:transparent;color:#ffb74d;border:1px solid #ff9800;text-shadow:0 0 6px rgba(255,152,0,.8);box-shadow:0 0 8px rgba(255,152,0,.45)'
+                : 'background:#2a2a2a;color:#aaa;border:1px solid #555';
+            return `<button class="action-btn" style="${stil}" onclick="${onclick}">${ad}: ${acik ? 'Açık' : 'Kapalı'}${bekliyor ? ' (bekliyor…)' : ''}</button>`;
+        }
+
+        function vacGonder(hedef, ac) {
+            if (!mqttClient) return false;
+            // retained: HUB o an bağlı olmasa da bir sonraki yoklamada okur, uygulayınca siler
+            mqttClient.publish(`evlamba/tatil/${hedef}/set`, ac ? '1' : '0', { qos: 1, retain: true });
+            return true;
+        }
+
+        function toggleVac(mac) {
+            const device = devices.find(d => d.mac === mac);
+            if (!device) return;
+            const ac = vac[mac] !== true;
+            if (!vacGonder(mac, ac)) return;
+            vacBekle[mac] = ac;
+            log(`${device.name} - tatil ${ac ? 'açma' : 'kapatma'} komutu gönderildi`);
+            renderDevices();
+        }
+
+        function toggleVacAll() {
+            const ac = !devices.every(d => vac[d.mac] === true);
+            if (ac && !confirm('Bütün cihazlar tatile alınacak: açık röleler (prizler dahil) kapanır, otomasyon ve zamanlayıcılar durur. Devam edilsin mi?')) return;
+            if (!vacGonder('hepsi', ac)) return;
+            devices.forEach(d => { vacBekle[d.mac] = ac; });
+            log(`Tam tatil ${ac ? 'açma' : 'kapatma'} komutu gönderildi`);
+            renderDevices();
+        }
+
         function getRSSIClass(rssi) {
             if (rssi === null) return '';
             if (rssi >= -60) return 'excellent';
