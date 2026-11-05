@@ -303,7 +303,7 @@ document.addEventListener("click", () => { const m = document.getElementById("di
             if (n && UZAK) n.style.display = 'none';
         }
         function modDegistir() {
-            if (UZAK) { location.href = 'http://merkezihub.local/'; return; }
+            if (UZAK) { location.href = 'http://' + (hubIp || 'merkezihub.local') + '/'; return; }  // telefonda .local cozulmeyebilir: HUB'in duyurdugu IP
             const list = devices.map(d => [d.name, d.mac]);
             location.href = REMOTE_URL + '#d=' + btoa(unescape(encodeURIComponent(JSON.stringify(list))));
         }
