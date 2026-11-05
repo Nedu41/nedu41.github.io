@@ -67,7 +67,7 @@ main{max-width:560px;margin:0 auto;padding:18px 16px 40px}
 
 <div class="card" style="cursor:pointer" onclick="location.href='ev-lamba/'">
   <div class="kbas"><span class="led"></span><b>Ev Lamba</b><span class="meta">canlı veri yok</span></div>
-  <div class="meta">Lamba ve tatil kontrolü (internet, her yerden) · <a href="http://merkezihub.local" onclick="event.stopPropagation()" style="color:#a3a8b2">Evdeyim: HUB paneli (yerel)</a></div>
+  <div class="meta">Lamba ve tatil kontrolü (internet, her yerden) · <a id="hub-yerel" href="http://merkezihub.local" onclick="event.stopPropagation()" style="color:#a3a8b2">Evdeyim: HUB paneli (yerel)</a></div>
 </div>
 
 <div class="card">
@@ -83,6 +83,8 @@ const $=s=>document.querySelector(s);
 function lsAl(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function lsYaz(k,v){try{localStorage.setItem(k,v);}catch(e){}}
 let mq=null,kalp=null,kSon=0,kOnline=null;
+// HUB IP'si ev-lamba/ sayfasi MQTT'den ogrenip kaydeder (ayni origin): telefonda merkezihub.local cozulmeyebilir
+(function(){const ip=lsAl('hubIp');const a=document.getElementById('hub-yerel');if(ip&&a){a.href='http://'+ip;a.textContent='Evdeyim: HUB paneli ('+ip+')';}})();
 
 // Yalniz sayfa ekrandayken: arka planda unutulan sekme Kalburum'u surekli canli yayinda (5 sn) tutup bahce kotasini yemesin.
 function izleyici(){if(mq&&mq.connected&&document.visibilityState==='visible')mq.publish('kalburum/izleyici','1');}

@@ -287,7 +287,7 @@ document.addEventListener("click", () => { const m = document.getElementById("di
         let devices = [];
         let rssiCache = {}; // RSSI değerlerini cache'lemek için
         // Tatil modu: HUB kalıcı dinleyemediği için komutu retained bırakıp aralıklı (≤3 dk) yoklamayla uygular
-        let vac = {}, vacBekle = {}, vacZaman = 0;  // mac -> tatilde mi / komut gönderildi bekleniyor / HUB'ın son durum zamanı
+        let vac = {}, vacBekle = {}, vacZaman = 0, hubIp = localStorage.getItem('hubIp') || '';  // mac -> tatilde mi / komut gönderildi bekleniyor / HUB'ın son durum zamanı
         
         // Ayni sayfa HUB'dan (/mqtt) ve nedu41.github.io/ev-lamba'dan servis edilir (tools/export_mqtt_page.py)
         const REMOTE = location.hostname.endsWith('github.io');
@@ -404,6 +404,7 @@ document.addEventListener("click", () => { const m = document.getElementById("di
                         vac = {};
                         (d.cihazlar || []).forEach(c => { vac[c.mac] = !!c.tatil; });
                         vacZaman = d.zaman || 0;
+                        if (d.ip) { hubIp = d.ip; try { localStorage.setItem('hubIp', d.ip); } catch (e) {} }  // portal "Evdeyim" baglantisi kullanir
                         Object.keys(vacBekle).forEach(m => { if (vac[m] === vacBekle[m]) delete vacBekle[m]; });  // HUB uyguladı
                         renderDevices();
                     } catch (e) { log('Tatil durumu okunamadı'); }
@@ -498,7 +499,7 @@ document.addEventListener("click", () => { const m = document.getElementById("di
             const sonDurum = vacZaman ? new Date(vacZaman * 1000).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) : 'henüz yok';
             let html = `
                 <div style="display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-bottom:10px">
-                    <small style="color:#888">HUB durumu: ${sonDurum} · komut ≤3 dk içinde uygulanır</small>
+                    <small style="color:#888">HUB durumu: ${sonDurum} · komut ≤3 dk içinde uygulanır${hubIp ? ` · HUB IP: <a href="http://${hubIp}" style="color:#9ca3af">${hubIp}</a>` : ''}</small>
                     ${vacBtn('hepsi', tumuTatil, devices.some(d => d.mac in vacBekle), 'Tam Tatil', 'toggleVacAll()')}
                 </div>`;
 
