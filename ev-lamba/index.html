@@ -415,6 +415,24 @@ document.addEventListener("click", () => { const m = document.getElementById("di
             });
         }
 
+        // HUB'in EMQX'e duyurdugu cihaz listesi (yalniz bizim hesap gorur): telefonda liste bossa
+        // ya da eksikse cihazlar buradan eklenir - disaridayken de MAC girmeye gerek kalmaz.
+        function hubCihazlariEkle(liste) {
+            let yeni = 0;
+            liste.forEach(c => {
+                const mac = String(c.mac || '').toLowerCase().replace(/:/g, '');
+                if (!/^[0-9a-f]{12}$/.test(mac)) return;
+                const ad = c.name || c.ad || c.isim || '';
+                const d = devices.find(x => x.mac === mac);
+                if (d) { if (ad && d.name.startsWith('Lamba ') && d.name !== ad) { d.name = ad; yeni++; } return; }
+                const nd = { id: 'dev_' + mac, name: ad || ('Lamba ' + mac.slice(-4)), mac: mac, ip: null, relays: { r1: 'off', r2: 'off' } };
+                devices.push(nd);
+                subscribeDevice(nd);
+                yeni++;
+            });
+            if (yeni) { saveDevices(); showAlert(yeni + ' cihaz HUB listesinden eklendi', 'success'); log(yeni + ' cihaz HUB listesinden eklendi'); }
+        }
+
         function connectMQTT() {
             // Ozel broker (EMQX Cloud, 2026-11-02): giris portal ile ayni anahtarlarda
             let u = localStorage.getItem('uzakKullanici'), p = localStorage.getItem('uzakSifre');
@@ -442,6 +460,7 @@ document.addEventListener("click", () => { const m = document.getElementById("di
                         const d = JSON.parse(msg);
                         vac = {};
                         (d.cihazlar || []).forEach(c => { vac[c.mac] = !!c.tatil; });
+                        hubCihazlariEkle(d.cihazlar || []);
                         vacZaman = d.zaman || 0;
                         if (d.ip) { hubIp = d.ip; try { localStorage.setItem('hubIp', d.ip); } catch (e) {} }  // portal "Evdeyim" baglantisi kullanir
                         Object.keys(vacBekle).forEach(m => { if (vac[m] === vacBekle[m]) delete vacBekle[m]; });  // HUB uyguladı
@@ -504,7 +523,7 @@ document.addEventListener("click", () => { const m = document.getElementById("di
                     <div style="text-align: center; padding: 40px 20px; color: #666;">
                         <div style="font-size: 40px; margin-bottom: 10px;">🏠</div>
                         <p>Henüz cihaz eklenmemiş</p>
-                        <small style="color:#666; margin-top:10px;">Yeni cihaz eklemek için ➕ butonuna tıklayın</small>
+                        <small style="color:#666; margin-top:10px;">HUB'dan cihaz listesi bekleniyor (en fazla 3 dk, sayfayı açık tutun)</small>
                     </div>
                 `;
                 return;
