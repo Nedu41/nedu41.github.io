@@ -283,7 +283,11 @@ input,select{background:#060708;border:1px solid #3a3f48;color:#e5e7eb}
 function digerAc(e) { e.preventDefault(); e.stopPropagation(); document.getElementById("digerMenu").classList.toggle("acik"); }
 document.addEventListener("click", () => { const m = document.getElementById("digerMenu"); if (m) m.classList.remove("acik"); });
 
-        let mqttClient = null;
+        let mqttClient = null;  // EMQX Cloud: tatil komutlari + HUB durumu
+        // ESP01 lamba modulleri TLS yapamadigi icin EMQX Cloud'a (yalniz TLS) baglanamaz, HiveMQ'da kaldi.
+        // Role komutlari (esp01/<mac>/rN/set|state) bu yuzden HiveMQ uzerinden gider.
+        let roleClient = null;
+        const ROLE_BROKER = 'wss://broker.hivemq.com:8884/mqtt';
         let devices = [];
         let rssiCache = {}; // RSSI değerlerini cache'lemek için
         // Tatil modu: HUB kalıcı dinleyemediği için komutu retained bırakıp aralıklı (≤3 dk) yoklamayla uygular
@@ -312,8 +316,10 @@ document.addEventListener("click", () => { const m = document.getElementById("di
             modDugmesi();
             loadDevices();
             importFromHash();
+            connectRole();
             connectMQTT();
-            if (REMOTE) document.getElementById('remoteLink').style.display = 'none';
+            const rl = document.getElementById('remoteLink');
+            if (REMOTE && rl) rl.style.display = 'none';
             else syncHubDevices();
         };
 
@@ -370,6 +376,45 @@ document.addEventListener("click", () => { const m = document.getElementById("di
             document.getElementById(tabName).classList.add('active');
         }
         
+        function connectRole() {
+            roleClient = mqtt.connect(ROLE_BROKER, {
+                clientId: 'evlamba-role-' + Math.random().toString(16).slice(2, 10),
+                reconnectPeriod: 5000
+            });
+            roleClient.on('connect', function() {
+                document.getElementById('mqttStatus').textContent = 'Bağlandı';
+                document.getElementById('mqttStatus').className = 'status connected';
+                log('Lamba sunucusu (HiveMQ) bağlandı');
+                devices.forEach(device => subscribeDevice(device));
+            });
+            roleClient.on('close', function() {
+                document.getElementById('mqttStatus').textContent = 'Bağlantı Yok';
+                document.getElementById('mqttStatus').className = 'status disconnected';
+            });
+            roleClient.on('message', function(topic, message) {
+                roleMesaj(topic, message.toString());
+            });
+            roleClient.on('error', function(err) { log(`Lamba sunucusu hatası: ${err}`); });
+        }
+
+        function roleMesaj(topic, msg) {
+            log(`MQTT: ${topic} = ${msg}`);
+            if (topic.includes('/status') && msg.includes('wifi_rssi')) {
+                try {
+                    const data = JSON.parse(msg);
+                    if (data.wifi_rssi !== undefined) updateDeviceRSSI(topic, data.wifi_rssi);
+                } catch (e) {}
+            }
+            devices.forEach(device => {
+                if (device.mac && topic.includes(device.mac)) {
+                    if (topic.includes('/r1/state')) device.relays.r1 = msg === '1' ? 'on' : 'off';
+                    else if (topic.includes('/r2/state')) device.relays.r2 = msg === '1' ? 'on' : 'off';
+                    saveDevices();
+                    renderDevices();
+                }
+            });
+        }
+
         function connectMQTT() {
             // Ozel broker (EMQX Cloud, 2026-11-02): giris portal ile ayni anahtarlarda
             let u = localStorage.getItem('uzakKullanici'), p = localStorage.getItem('uzakSifre');
@@ -384,14 +429,8 @@ document.addEventListener("click", () => { const m = document.getElementById("di
             });
             
             mqttClient.on('connect', function() {
-                document.getElementById('mqttStatus').textContent = 'Bağlandı';
-                document.getElementById('mqttStatus').className = 'status connected';
-                log('MQTT bağlandı');
+                log('Tatil sunucusu (EMQX) bağlandı');
                 mqttClient.subscribe('evlamba/tatil/durum');
-
-                devices.forEach(device => {
-                    subscribeDevice(device);
-                });
             });
             
             mqttClient.on('message', function(topic, message) {
@@ -410,30 +449,6 @@ document.addEventListener("click", () => { const m = document.getElementById("di
                     } catch (e) { log('Tatil durumu okunamadı'); }
                     return;
                 }
-
-                // RSSI değeri kontrolü
-                if (topic.includes('/status') && msg.includes('wifi_rssi')) {
-                    try {
-                        const data = JSON.parse(msg);
-                        if (data.wifi_rssi !== undefined) {
-                            updateDeviceRSSI(topic, data.wifi_rssi);
-                        }
-                    } catch (e) {
-                        // JSON parse hatası
-                    }
-                }
-                
-                devices.forEach(device => {
-                    if (device.mac && topic.includes(device.mac)) {
-                        if (topic.includes('/r1/state')) {
-                            device.relays.r1 = msg === '1' ? 'on' : 'off';
-                        } else if (topic.includes('/r2/state')) {
-                            device.relays.r2 = msg === '1' ? 'on' : 'off';
-                        }
-                        saveDevices();
-                        renderDevices();
-                    }
-                });
             });
             
             mqttClient.on('error', function(err) {
@@ -446,8 +461,8 @@ document.addEventListener("click", () => { const m = document.getElementById("di
         }
         
         function subscribeDevice(device) {
-            if (!device.mac || !mqttClient) return;
-            
+            if (!device.mac || !roleClient) return;
+
             const topics = [
                 `esp01/${device.mac}/r1/state`,
                 `esp01/${device.mac}/r2/state`,
@@ -455,7 +470,7 @@ document.addEventListener("click", () => { const m = document.getElementById("di
             ];
             
             topics.forEach(topic => {
-                mqttClient.subscribe(topic, function(err) {
+                roleClient.subscribe(topic, function(err) {
                     if (!err) log(`Abone: ${topic}`);
                 });
             });
@@ -651,13 +666,14 @@ document.addEventListener("click", () => { const m = document.getElementById("di
         
         function toggleRelay(deviceId, relay) {
             const device = devices.find(d => d.id === deviceId);
-            if (!device || !device.mac || !mqttClient) return;
-            
+            if (!device || !device.mac) return;
+            if (!roleClient || !roleClient.connected) { showAlert('Lamba sunucusuna bağlı değil, birkaç saniye sonra tekrar deneyin', 'error'); return; }
+
             const currentState = device.relays[relay];
             const newState = currentState === 'on' ? '0' : '1';
-            
+
             const topic = `esp01/${device.mac}/${relay}/set`;
-            mqttClient.publish(topic, newState, { qos: 0, retain: false });
+            roleClient.publish(topic, newState, { qos: 1, retain: false });
             
             log(`${device.name} - ${relay}: ${currentState === 'on' ? 'Kapandı' : 'Açıldı'}`);
             
@@ -713,13 +729,13 @@ document.addEventListener("click", () => { const m = document.getElementById("di
             
             if (!device) return;
             
-            if (mqttClient && device.mac) {
+            if (roleClient && device.mac) {
                 const oldTopics = [
                     `esp01/${device.mac}/r1/state`,
                     `esp01/${device.mac}/r2/state`,
                     `esp01/${device.mac}/status`
                 ];
-                oldTopics.forEach(topic => mqttClient.unsubscribe(topic));
+                oldTopics.forEach(topic => roleClient.unsubscribe(topic));
                 
                 // Eski RSSI değerini temizle
                 delete rssiCache[device.mac];
@@ -754,13 +770,13 @@ document.addEventListener("click", () => { const m = document.getElementById("di
             const index = devices.findIndex(d => d.id === deviceId);
             
             if (index !== -1) {
-                if (mqttClient && device.mac) {
+                if (roleClient && device.mac) {
                     const topics = [
                         `esp01/${device.mac}/r1/state`,
                         `esp01/${device.mac}/r2/state`,
                         `esp01/${device.mac}/status`
                     ];
-                    topics.forEach(topic => mqttClient.unsubscribe(topic));
+                    topics.forEach(topic => roleClient.unsubscribe(topic));
                     
                     // RSSI cache'den sil
                     delete rssiCache[device.mac];
