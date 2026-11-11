@@ -184,6 +184,11 @@ input,select,.input,textarea{background:#060708;border:1px solid #3a3f48;color:#
 .ctrl-btn{background-color:#020203 !important;color:#7d828c !important;border:1px solid #000 !important;box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 1px 2px rgba(0,0,0,.5)}
 .ctrl-btn.btn-on{--t:34,230,96;color:rgb(var(--t)) !important;text-shadow:0 0 4px rgb(var(--t)),0 0 10px rgba(var(--t),.8);box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 0 6px 1px rgba(var(--t),.6),0 0 22px 5px rgba(var(--t),.35)}
 input,select{background:#060708;border:1px solid #3a3f48;color:#e5e7eb}
+.giris{display:flex;flex-direction:column;gap:8px;margin:10px 0;padding:12px;background:#0b0c0e;border:1px solid #000;border-radius:10px}
+.giris b{color:#e5e7eb}.giris small{color:#9ca3af}
+.giris input{width:100%;box-sizing:border-box;padding:9px;border-radius:6px;font-size:15px}
+.sifre-sar{position:relative}.sifre-sar input{padding-right:40px}
+.goz{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:0;color:#9ca3af;padding:4px;cursor:pointer}
 
 /* Ust menu kaydirinca sabit; Diger Projeler acilir listesi */
 .nav{position:sticky;top:0;z-index:45;background:rgba(6,7,8,.94)}
@@ -215,7 +220,19 @@ input,select{background:#060708;border:1px solid #3a3f48;color:#e5e7eb}
         </div>
         
         <div id="alert" class="alert"></div>
-        
+
+        <!-- prompt() Android WebView'de (encanPO) calismaz: giris sayfa icinde -->
+        <div id="girisKutu" class="giris" style="display:none">
+            <b>Uzak giriş</b>
+            <small id="girisNot">Cihaz listesi ve tatil için (portal ile aynı hesap)</small>
+            <input id="gKul" placeholder="Kullanıcı adı" autocomplete="username" autocapitalize="off">
+            <div class="sifre-sar">
+                <input id="gSif" type="password" placeholder="Şifre" autocomplete="current-password" onkeydown="if(event.key==='Enter')girisYap()">
+                <button type="button" class="goz" onclick="gozDegis()" aria-label="Şifreyi göster/gizle"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/><line id="gozCizgi" x1="3" y1="3" x2="21" y2="21"/></svg></button>
+            </div>
+            <button class="btn btn-on" onclick="girisYap()">Bağlan</button>
+        </div>
+
         <div class="tabs">
             <div class="tab active" onclick="showTab('devices')">📱 Cihazlar</div>
             <div class="tab" onclick="showTab('add')">➕ Ekle</div>
@@ -436,11 +453,7 @@ document.addEventListener("click", () => { const m = document.getElementById("di
         function connectMQTT() {
             // Ozel broker (EMQX Cloud, 2026-11-02): giris portal ile ayni anahtarlarda
             let u = localStorage.getItem('uzakKullanici'), p = localStorage.getItem('uzakSifre');
-            if (!u || !p) {
-                u = prompt('MQTT kullanıcı adı', u || ''); if (!u) return;
-                p = prompt('MQTT şifresi'); if (!p) return;
-                localStorage.setItem('uzakKullanici', u); localStorage.setItem('uzakSifre', p);
-            }
+            if (!u || !p) { girisGoster(u, ''); return; }
             mqttClient = mqtt.connect('wss://h11f4d1a.ala.eu-central-1.emqxsl.com:8084/mqtt', {
                 username: u, password: p,
                 clientId: 'evlamba-' + Math.random().toString(16).slice(2, 10)
@@ -474,9 +487,30 @@ document.addEventListener("click", () => { const m = document.getElementById("di
                 log(`MQTT hatası: ${err}`);
                 if (/auth|Not authorized|Bad user/i.test(String(err))) {
                     localStorage.removeItem('uzakSifre'); mqttClient.end(true);
-                    log('Giriş reddedildi - sayfayı yenileyip tekrar girin');
+                    log('Giriş reddedildi');
+                    girisGoster(localStorage.getItem('uzakKullanici'), 'Giriş reddedildi, kullanıcı adı/şifreyi kontrol edin');
                 }
             });
+        }
+
+        function girisGoster(u, not) {
+            document.getElementById('gKul').value = u || '';
+            document.getElementById('gSif').value = '';
+            document.getElementById('girisNot').textContent = not || 'Cihaz listesi ve tatil için (portal ile aynı hesap)';
+            document.getElementById('girisKutu').style.display = 'flex';
+        }
+        function girisYap() {
+            const u = document.getElementById('gKul').value.trim(), p = document.getElementById('gSif').value;
+            if (!u || !p) { showAlert('Kullanıcı adı ve şifre gerekli', 'error'); return; }
+            try { localStorage.setItem('uzakKullanici', u); localStorage.setItem('uzakSifre', p); } catch (e) {}
+            document.getElementById('girisKutu').style.display = 'none';
+            if (mqttClient) mqttClient.end(true);
+            connectMQTT();
+        }
+        function gozDegis() {
+            const s = document.getElementById('gSif'), gizli = s.type === 'password';
+            s.type = gizli ? 'text' : 'password';
+            document.getElementById('gozCizgi').style.display = gizli ? 'none' : '';
         }
         
         function subscribeDevice(device) {
