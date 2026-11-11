@@ -183,6 +183,9 @@ input,select,.input,textarea{background:#060708;border:1px solid #3a3f48;color:#
 .relay-item{background:rgba(0,0,0,.4);border:1px solid #2a2e35}
 .ctrl-btn{background-color:#020203 !important;color:#7d828c !important;border:1px solid #000 !important;box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 1px 2px rgba(0,0,0,.5)}
 .ctrl-btn.btn-on{--t:34,230,96;color:rgb(var(--t)) !important;text-shadow:0 0 4px rgb(var(--t)),0 0 10px rgba(var(--t),.8);box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 0 6px 1px rgba(var(--t),.6),0 0 22px 5px rgba(var(--t),.35)}
+/* Kapali buton: altindan soluk gri isik sizar (arkadan aydinlatmali tus) - siyah zeminde kenari belli olsun; renksiz, acik (neon) durumla karismaz */
+.btn:not(.btn-on),.ctrl-btn:not(.btn-on){box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 1px 2px rgba(0,0,0,.5),0 6px 10px -4px rgba(185,195,215,.6),0 3px 14px -6px rgba(185,195,215,.35) !important}
+.btn:not(.btn-on):active,.ctrl-btn:not(.btn-on):active{box-shadow:inset 0 2px 5px rgba(0,0,0,.6),0 2px 4px -2px rgba(175,185,205,.22) !important}
 input,select{background:#060708;border:1px solid #3a3f48;color:#e5e7eb}
 .giris{display:flex;flex-direction:column;gap:8px;margin:10px 0;padding:12px;background:#0b0c0e;border:1px solid #000;border-radius:10px}
 .giris b{color:#e5e7eb}.giris small{color:#9ca3af}
