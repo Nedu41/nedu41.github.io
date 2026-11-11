@@ -25,6 +25,9 @@ body{color-scheme:dark;background-color:#08090a;background-attachment:fixed;back
 .btn.btn-on.ton-kirmizi{--t:255,85,85}.btn.btn-on.ton-amber{--t:255,190,70}.btn.btn-on.ton-mavi{--t:70,150,255}.btn.btn-on.sabit{animation:none}
 @keyframes btnNefes{50%{box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 0 5px 1px rgba(var(--t),.45),0 0 16px 3px rgba(var(--t),.22);text-shadow:0 0 3px rgb(var(--t)),0 0 7px rgba(var(--t),.7),0 0 14px rgba(var(--t),.5)}}
 @media(prefers-reduced-motion:reduce){.btn.btn-on{animation:none}}
+/* Kapali buton: altindan soluk gri isik sizar (arkadan aydinlatmali tus) - siyah zeminde kenari belli olsun; renksiz, acik (neon) durumla karismaz */
+.btn:not(.btn-on){box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 1px 2px rgba(0,0,0,.5),0 6px 10px -4px rgba(185,195,215,.6),0 3px 14px -6px rgba(185,195,215,.35) !important}
+.btn:not(.btn-on):active{box-shadow:inset 0 2px 5px rgba(0,0,0,.6),0 2px 4px -2px rgba(185,195,215,.22) !important}
 .nav,.sekmeler,.dark .sekmeler{background:rgba(5,5,6,.35)}
 body .nav button,body .sekme-btn{background:transparent;border:1px solid #3a3f48;color:#a3a8b2;box-shadow:none}
 body .nav button.active,body .sekme-btn.aktif{background:transparent;color:#9ec3f5;border-color:#60a5fa;text-shadow:0 0 6px rgba(96,165,250,.8);box-shadow:0 0 8px rgba(96,165,250,.45)}
