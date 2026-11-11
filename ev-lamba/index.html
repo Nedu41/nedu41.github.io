@@ -238,7 +238,7 @@ input,select{background:#060708;border:1px solid #3a3f48;color:#e5e7eb}
 
         <div class="tabs">
             <div class="tab active" onclick="showTab('devices')">📱 Cihazlar</div>
-            <div class="tab" onclick="showTab('add')">➕ Ekle</div>
+            <div class="tab" onclick="showTab('add')">Ayarlar</div>
             <div class="tab" onclick="showTab('logs')">📋 Loglar</div>
         </div>
         
@@ -247,6 +247,10 @@ input,select{background:#060708;border:1px solid #3a3f48;color:#e5e7eb}
         </div>
         
         <div id="add" class="tab-content">
+            <!-- Sil/Duzenle gibi yonetim dugmeleri ana sayfada degil burada (yanlislikla basilmasin) -->
+            <div class="form-label" style="margin-bottom:8px">Cihaz Yönetimi</div>
+            <div id="yonetimListe" style="margin-bottom:20px"></div>
+            <div class="form-label" style="margin-bottom:8px">Cihaz Ekle</div>
             <form id="addForm" onsubmit="return addDevice()">
                 <div class="form-group">
                     <label class="form-label">Cihaz Adı</label>
@@ -558,8 +562,25 @@ document.addEventListener("click", () => { const m = document.getElementById("di
             localStorage.setItem('esp01_rssi_cache', JSON.stringify(rssiCache));
         }
         
+        function renderYonetim() {
+            const el = document.getElementById('yonetimListe');
+            if (!el) return;
+            el.innerHTML = devices.length ? devices.map(d => `
+                <div class="relay-item" style="margin-bottom:8px">
+                    <div class="relay-info">
+                        <div class="relay-name">${d.name}</div>
+                        <small style="color:#888">${d.mac}</small>
+                    </div>
+                    <div style="display:flex;gap:8px">
+                        <button class="action-btn btn-edit" onclick="editDevice('${d.id}')">Düzenle</button>
+                        <button class="action-btn btn-delete" onclick="deleteDevice('${d.id}')">Sil</button>
+                    </div>
+                </div>`).join('') : '<small style="color:#888">Cihaz yok</small>';
+        }
+
         function renderDevices() {
             const container = document.getElementById('deviceList');
+            renderYonetim();
             
             if (devices.length === 0) {
                 container.innerHTML = `
@@ -629,8 +650,6 @@ document.addEventListener("click", () => { const m = document.getElementById("di
                         
                         <div class="device-actions">
                             ${vacBtn(device.mac, vac[device.mac] === true, device.mac in vacBekle, 'Tatil', `toggleVac('${device.mac}')`)}
-                            <button class="action-btn btn-edit" onclick="editDevice('${device.id}')">Düzenle</button>
-                            <button class="action-btn btn-delete" onclick="deleteDevice('${device.id}')">Sil</button>
                             ${device.ip ? `<button class="action-btn btn-check" onclick="checkDevice('${device.id}')">Durum</button>` : ''}
                         </div>
                     </div>
@@ -638,6 +657,7 @@ document.addEventListener("click", () => { const m = document.getElementById("di
             });
             
             container.innerHTML = html;
+            renderYonetim();
         }
         
         // Açıkken turuncu parlama, kapalıyken gri; komut gönderilmiş ama HUB henüz uygulamadıysa "bekliyor"
