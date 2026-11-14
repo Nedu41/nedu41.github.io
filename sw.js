@@ -10,6 +10,7 @@ self.addEventListener('activate', e => e.waitUntil(
 ));
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET' || new URL(e.request.url).origin !== location.origin) return;
+  if (new URL(e.request.url).pathname.endsWith('.apk')) return;  // uygulama dosyasi onbellege alinmaz (buyuk, hep guncel insin)
   e.respondWith(
     fetch(e.request.url, { cache: 'no-cache', credentials: 'same-origin' }).then(r => {
       const kopya = r.clone();
