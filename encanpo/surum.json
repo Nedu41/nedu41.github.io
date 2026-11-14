@@ -1,7 +1,7 @@
 {
-  "versionCode": 6,
-  "versionName": "1.5",
+  "versionCode": 7,
+  "versionName": "1.6",
   "apk": "encanpo.apk",
-  "sha256": "ca0f7174aec3c7a5e6d67b14d78b406cd5ed3d2eb09940476d7feb7c04400325",
-  "notlar": "Uygulama kendini günceller; seçim son kullanılan düğmede kalır."
+  "sha256": "30119f371c011ce5ed1bbd674e23892061f13e3877665e8a1015379e405d364d",
+  "notlar": "Lamba düğmesine basınca seçim aynı düğmede kalır; sürüm notları ana sayfanın altında."
 }
