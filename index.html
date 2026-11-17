@@ -51,11 +51,6 @@ main{max-width:560px;margin:0 auto;padding:18px 16px 40px}
 .satir .et{width:118px;color:var(--muted)}
 .satir .dg{font-variant-numeric:tabular-nums}
 .bos{visibility:hidden}
-.ara{width:100%;box-sizing:border-box;padding:8px 10px;border-radius:7px;margin:8px 0 4px;font-size:14px}
-.sonuc{font-size:13px;padding:3px 0;border-bottom:1px dashed #2a2e35;display:flex;gap:8px}
-.sonuc span:first-child{flex:1}.sonuc .az{color:#ff8a8a}
-.tok{display:flex;gap:6px;align-items:center;margin-top:8px}.tok input{flex:1;padding:7px 9px;border-radius:7px;font-size:13px}
-.goz{background:none;border:1px solid #3a3f48;border-radius:7px;padding:5px 7px;cursor:pointer;color:#a3a8b2;line-height:0}
 .btn{padding:4px 12px;font-size:12px}
 </style></head><body><main>
 <div class="ust">
@@ -76,20 +71,6 @@ main{max-width:560px;margin:0 auto;padding:18px 16px 40px}
 <div class="card" style="cursor:pointer" onclick="location.href='ev-lamba/'">
   <div class="kbas"><span class="led"></span><b>Ev Lamba</b><span class="meta">canlı veri yok</span></div>
   <div class="meta">Lamba ve tatil kontrolü (internet, her yerden) · <a id="hub-yerel" href="http://merkezihub.local" onclick="event.stopPropagation()" style="color:#a3a8b2">Evdeyim: HUB paneli (yerel)</a></div>
-</div>
-
-<div class="card" id="envanter">
-  <div class="kbas"><span class="led" id="e-led"></span><b>Envanter</b><span class="meta" id="e-yas">--</span></div>
-  <div class="satir"><span class="led bos"></span><span class="et">Parça çeşidi</span><span class="dg" id="e-say">--</span></div>
-  <div class="satir"><span class="led" id="e-az-led"></span><span class="et">Azalan</span><span class="dg" id="e-az">--</span></div>
-  <input class="ara" id="e-ara" placeholder="Parça ara (ör. 10uF, röle)" oninput="eAra()">
-  <div id="e-sonuc"></div>
-  <div class="tok" id="e-tok" style="display:none">
-    <input type="password" id="e-token" placeholder="GitHub token (yalnız AkilliEnvanter okuma)" autocomplete="off">
-    <button class="goz" type="button" onclick="gozDegis()" title="Göster/gizle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
-    <button class="btn" type="button" onclick="eTokenKaydet()">Kaydet</button>
-  </div>
-  <div class="meta" style="margin-top:8px"><a id="e-yerel" href="#" style="color:#a3a8b2">Evdeyim: tam program (PC)</a> · <a href="#" onclick="eTokenGoster();return false" style="color:#a3a8b2">Token</a></div>
 </div>
 
 <div class="card">
@@ -168,45 +149,6 @@ function girisDegistir(){
   if(mq){ if(confirm('Çıkış yapılsın mı? (kayıtlı şifre silinir)')){lsYaz('uzakSifre','');kes();yaz('#baglanti','Bağlantı yok');} }
   else baglan();
 }
-
-// === Envanter: ozet, ozel depodaki robot/envanter.json'dan (PC kapaliyken de). Token yalniz bu tarayicida saklanir. ===
-const E_URL='https://api.github.com/repos/Nedu41/AkilliEnvanter/contents/robot/envanter.json';
-let eVeri=null;
-function ePcLink(){const ip=lsAl('envanterIp')||'192.168.1.138';const a=$('#e-yerel');a.href='http://'+ip+':5000';a.textContent='Evdeyim: tam program ('+ip+')';}
-ePcLink();
-$('#e-yerel').addEventListener('contextmenu',ev=>{ev.preventDefault();const ip=prompt('Envanter PC IP',lsAl('envanterIp')||'192.168.1.138');if(ip){lsYaz('envanterIp',ip.trim());ePcLink();}});
-function eTokenGoster(){$('#e-tok').style.display='flex';$('#e-token').value=lsAl('envanterToken')||'';}
-function gozDegis(){const i=$('#e-token');i.type=i.type==='password'?'text':'password';}
-function eTokenKaydet(){lsYaz('envanterToken',$('#e-token').value.trim());$('#e-tok').style.display='none';eYukle();}
-function eYukle(){
-  const t=lsAl('envanterToken');
-  if(!t){yaz('#e-yas','token gerekli');led('#e-led',null);eTokenGoster();return;}
-  yaz('#e-yas','yükleniyor...');
-  fetch(E_URL,{headers:{'Authorization':'Bearer '+t,'Accept':'application/vnd.github.raw+json'},cache:'no-store'})
-  .then(r=>{if(!r.ok)throw new Error(r.status===401||r.status===404?'token geçersiz':'HTTP '+r.status);return r.json();})
-  .then(d=>{eVeri=d.parcalar||[];lsYaz('envanterOnbellek',JSON.stringify(d));eGoster(d,false);})
-  .catch(e=>{led('#e-led','kotu');const o=lsAl('envanterOnbellek');if(o){try{eGoster(JSON.parse(o),true);}catch(x){}}yaz('#e-yas',e.message+(o?' (önbellek)':''));if(/token/.test(e.message))eTokenGoster();});
-}
-function eGoster(d,eski){
-  eVeri=d.parcalar||[];
-  const az=eVeri.filter(x=>x.m>0&&x.a<=x.m);
-  yaz('#e-say',eVeri.length);yaz('#e-az',az.length?az.length+' parça':'yok');
-  led('#e-az-led',az.length?'kotu':null);if(!eski)led('#e-led','iyi');
-  yaz('#e-yas',d.guncelleme||'--');eAra();
-}
-function trKucuk(s){return String(s||'').toLocaleLowerCase('tr');}
-function eAra(){
-  const q=trKucuk($('#e-ara').value.trim()),k=$('#e-sonuc');k.innerHTML='';
-  if(!q||!eVeri)return;
-  const b=eVeri.filter(x=>trKucuk(x.p).includes(q)).slice(0,12);
-  if(!b.length){k.innerHTML='<div class="sonuc"><span class="meta">bulunamadı</span></div>';return;}
-  b.forEach(x=>{const r=document.createElement('div');r.className='sonuc';
-    const a=document.createElement('span');a.textContent=x.p;
-    const n=document.createElement('span');n.textContent=x.a+' adet';if(x.m>0&&x.a<=x.m)n.className='az';
-    const kt=document.createElement('span');kt.className='meta';kt.textContent=x.k||'-';
-    r.append(a,n,kt);k.appendChild(r);});
-}
-eYukle();
 baglan();
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>

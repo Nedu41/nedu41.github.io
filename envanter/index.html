@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Envanter</title>
+<meta name="theme-color" content="#060607">
+<link rel="icon" href="../icon-192.png">
+<style>
+/* === PANO TEMASI (ESP32 web_ui.h ve Sudepo main.cpp handleCSS AYNI blok - birini degistirince digerini de guncelle) ===
+   Eski, koyu boyali elektrik panosu: lekeli boya + pas izi + citik + gren + kenar kararmasi; kartlar cerceve+civata plakasi, basliklar yaslanmis etiket. */
+:root,.dark{--bg:#060607;--card:#0b0c0f;--text:#e5e7eb;--muted:#9ca3af;--border:#3a3f48;--border-strong:#5b616c;--primary:#60a5fa;--accent:#34d399;--warn:#fbbf24;--danger:#f87171;--danger-bg:#3a2222;--danger-bg-t:rgba(58,34,34,.6);--tab-bg:#101216;--shadow:0 2px 8px rgba(0,0,0,.8);--grid-dot:rgba(150,160,180,.05)}
+body{color-scheme:dark;background-color:#08090a;background-attachment:fixed;background-image:radial-gradient(ellipse at 50% 38%,rgba(0,0,0,0) 30%,rgba(0,0,0,.85) 100%),linear-gradient(180deg,rgba(150,72,26,.30),rgba(150,72,26,0) 42%) 7% 0/5px 100% no-repeat,linear-gradient(180deg,rgba(150,72,26,.22),rgba(150,72,26,0) 42%) 23% 0/3px 100% no-repeat,linear-gradient(180deg,rgba(150,72,26,.26),rgba(150,72,26,0) 42%) 58% 0/6px 100% no-repeat,linear-gradient(180deg,rgba(150,72,26,.28),rgba(150,72,26,0) 42%) 81% 0/4px 100% no-repeat,linear-gradient(180deg,rgba(150,72,26,.2),rgba(150,72,26,0) 42%) 94% 0/3px 100% no-repeat,repeating-linear-gradient(118deg,transparent 0 170px,rgba(255,255,255,.05) 171px,transparent 173px,transparent 310px,rgba(255,255,255,.035) 311px,transparent 312px),url('data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27700%27%20height%3D%27700%27%3E%3Cfilter%20id%3D%27n%27%3E%3CfeTurbulence%20type%3D%27fractalNoise%27%20baseFrequency%3D%27.007%27%20numOctaves%3D%273%27%20stitchTiles%3D%27stitch%27%2F%3E%3CfeColorMatrix%20values%3D%270%200%200%200%20.75%20%200%200%200%200%20.78%20%200%200%200%200%20.85%20%201.1%200%200%200%20-.38%27%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%27100%25%27%20height%3D%27100%25%27%20filter%3D%27url%28%23n%29%27%2F%3E%3C%2Fsvg%3E'),url('data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27500%27%20height%3D%27500%27%3E%3Cfilter%20id%3D%27n%27%3E%3CfeTurbulence%20type%3D%27fractalNoise%27%20baseFrequency%3D%27.012%27%20numOctaves%3D%273%27%20stitchTiles%3D%27stitch%27%2F%3E%3CfeColorMatrix%20values%3D%270%200%200%200%200%20%200%200%200%200%200%20%200%200%200%200%200%20%201.3%200%200%200%20-.55%27%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%27100%25%27%20height%3D%27100%25%27%20filter%3D%27url%28%23n%29%27%2F%3E%3C%2Fsvg%3E'),url('data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27160%27%20height%3D%27160%27%3E%3Cfilter%20id%3D%27n%27%3E%3CfeTurbulence%20type%3D%27fractalNoise%27%20baseFrequency%3D%27.9%27%20numOctaves%3D%272%27%20stitchTiles%3D%27stitch%27%2F%3E%3CfeColorMatrix%20values%3D%270%200%200%200%201%20%200%200%200%200%201%20%200%200%200%200%201%20%200%200%200%20.16%200%27%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%27100%25%27%20height%3D%27100%25%27%20filter%3D%27url%28%23n%29%27%2F%3E%3C%2Fsvg%3E');background-size:auto,auto,auto,auto,auto,auto,700px 700px,500px 500px,160px 160px}
+.card,details.card{background-color:transparent;border-width:4px;border-style:solid;border-top-color:#6a707c;border-right-color:#4b515c;border-bottom-color:#3a3f48;border-radius:6px;box-shadow:0 0 0 2px #000,inset 0 0 0 1px #000,inset 0 2px 0 rgba(255,255,255,.07),inset 0 0 24px rgba(0,0,0,.6),0 5px 14px rgba(0,0,0,.9);background-repeat:no-repeat;background-image:radial-gradient(circle 4.5px at 12px 12px,#a3a9b4 0,#59606c 38%,#16181d 75%,transparent 82%),radial-gradient(circle 4.5px at calc(100% - 12px) 12px,#a3a9b4 0,#59606c 38%,#16181d 75%,transparent 82%),radial-gradient(circle 4.5px at 12px calc(100% - 12px),#a3a9b4 0,#59606c 38%,#16181d 75%,transparent 82%),radial-gradient(circle 4.5px at calc(100% - 12px) calc(100% - 12px),#a3a9b4 0,#59606c 38%,#16181d 75%,transparent 82%)}
+.card h3,.card>summary,details.card>summary{text-transform:uppercase;letter-spacing:1.6px;font-family:Consolas,'DejaVu Sans Mono','Courier New',monospace;font-size:13px;font-weight:700;color:#dcd2ac;text-shadow:0 1px 0 #000,0 0 7px rgba(220,210,172,.18)}
+.card h3{padding-bottom:6px;border-bottom:1px dashed #454a54}
+.btn{padding:10px 12px;border:1px solid #000;border-radius:9px;cursor:pointer;font-weight:600;background-color:#020203;background-image:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,0) 45%,rgba(0,0,0,.4));color:#a3a8b2;box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 1px 2px rgba(0,0,0,.5);transition:transform .08s ease,box-shadow .25s,color .25s;filter:none}
+.btn:active{transform:translateY(2px);box-shadow:inset 0 2px 5px rgba(0,0,0,.6);filter:none}
+/* Kapaliyken TUM butonlar sonuk gri (LED sonuk hissi); anlam tonu (--t) sadece basilirken ve durum acikken (btn-on) yanar: primary/mavi=genel islem, accent/yesil=olumlu, warn/turuncu=dikkat, danger/kirmizi=tehlikeli */
+.btn{color:#7d828c}
+.btn-primary,.btn-mavi{--t:96,165,250}.btn-accent,.btn-yesil{--t:34,230,96}.btn-danger,.btn-kirmizi{--t:255,85,85}.btn-warn,.btn-turuncu{--t:255,190,70}
+.btn:active{color:rgb(var(--t,200,205,215));text-shadow:0 0 5px rgb(var(--t,200,205,215)),0 0 12px rgba(var(--t,200,205,215),.6)}
+.btn-primary,.btn-accent,.btn-danger,.btn-warn,.btn-yesil,.btn-turuncu,.btn-mavi,.btn-kirmizi{background-color:#020203}
+/* Durum (acik/aktif): zemin siyah, yazi + cevre --t tonunda neon, yavasca nefes alir. Varsayilan yesil; ton-kirmizi=tehlike aktif, ton-amber=uyari durumu, ton-mavi=bilgi/bahce kapisi */
+.btn.btn-on{--t:34,230,96;font-weight:800;color:rgb(var(--t));text-shadow:0 0 4px rgb(var(--t)),0 0 10px rgba(var(--t),.8),0 0 20px rgba(var(--t),.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 0 6px 1px rgba(var(--t),.6),0 0 22px 5px rgba(var(--t),.35);animation:btnNefes 3.6s ease-in-out infinite}
+.btn.btn-on.ton-kirmizi{--t:255,85,85}.btn.btn-on.ton-amber{--t:255,190,70}.btn.btn-on.ton-mavi{--t:70,150,255}.btn.btn-on.sabit{animation:none}
+@keyframes btnNefes{50%{box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 0 5px 1px rgba(var(--t),.45),0 0 16px 3px rgba(var(--t),.22);text-shadow:0 0 3px rgb(var(--t)),0 0 7px rgba(var(--t),.7),0 0 14px rgba(var(--t),.5)}}
+@media(prefers-reduced-motion:reduce){.btn.btn-on{animation:none}}
+/* Kapali buton: altindan soluk gri isik sizar (arkadan aydinlatmali tus) - siyah zeminde kenari belli olsun; renksiz, acik (neon) durumla karismaz */
+.btn:not(.btn-on){box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 1px 2px rgba(0,0,0,.5),0 6px 10px -4px rgba(185,195,215,.6),0 3px 14px -6px rgba(185,195,215,.35) !important}
+.btn:not(.btn-on):active{box-shadow:inset 0 2px 5px rgba(0,0,0,.6),0 2px 4px -2px rgba(185,195,215,.22) !important}
+.nav,.sekmeler,.dark .sekmeler{background:rgba(5,5,6,.35)}
+body .nav button,body .sekme-btn{background:transparent;border:1px solid #3a3f48;color:#a3a8b2;box-shadow:none}
+body .nav button.active,body .sekme-btn.aktif{background:transparent;color:#9ec3f5;border-color:#60a5fa;text-shadow:0 0 6px rgba(96,165,250,.8);box-shadow:0 0 8px rgba(96,165,250,.45)}
+input,select,.input,textarea{background:#060708;border:1px solid #3a3f48;color:#e5e7eb}
+.tema-btn{display:none}
+/* === /PANO TEMASI === */
+
+/* === Envanter === */
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text)}
+main{max-width:640px;margin:0 auto;padding:16px 16px 40px}
+.ust{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:4px}
+.ust h1{font-size:20px;margin:0;color:#dcd2ac;letter-spacing:.5px}
+.meta{font-size:12px;color:var(--muted)}
+.card{display:block;padding:14px 24px;margin:14px 0}
+details.card>summary{cursor:pointer;list-style:none;padding:2px 0}
+details.card>summary::-webkit-details-marker{display:none}
+.led{width:12px;height:12px;border-radius:50%;background:#3a3f48;box-shadow:inset 0 0 2px #000;flex:none;display:inline-block;vertical-align:middle}
+.led.iyi{background:#22e660;box-shadow:0 0 6px #22e660,0 0 14px rgba(34,230,96,.6)}
+.led.kotu{background:#ff5555;box-shadow:0 0 6px #ff5555,0 0 14px rgba(255,85,85,.6)}
+.gizli{visibility:hidden}
+.satir{display:flex;align-items:center;gap:8px;font-size:14px;padding:3px 0}
+.satir .et{width:120px;color:var(--muted)}
+.satir .dg{font-variant-numeric:tabular-nums}
+.ara{width:100%;box-sizing:border-box;padding:10px 12px;border-radius:8px;font-size:15px}
+.liste{margin-top:8px}
+.p{display:flex;gap:10px;font-size:14px;padding:6px 0;border-bottom:1px dashed #2a2e35}
+.p .ad{flex:1;min-width:0;overflow-wrap:anywhere}
+.p .ad-n{font-variant-numeric:tabular-nums;white-space:nowrap}
+.p .ad-n.az{color:#ff8a8a}
+.p .kt{color:var(--muted);white-space:nowrap;font-size:13px}
+.kutu{margin:4px 0;border-bottom:1px solid #22262c}
+.kutu>summary{cursor:pointer;padding:8px 0;font-size:14px;color:#cfd3da}
+.kutu>summary .meta{float:right}
+.tok{display:flex;gap:6px;align-items:center;margin:8px 0}
+.tok input{flex:1;min-width:0;padding:8px 10px;border-radius:7px;font-size:13px}
+.goz{background:none;border:1px solid #3a3f48;border-radius:7px;padding:6px 8px;cursor:pointer;color:#a3a8b2;line-height:0}
+.btn{padding:7px 14px;font-size:13px}
+a.bag{color:#9ec3f5}
+.not{font-size:13px;color:var(--muted);line-height:1.5}
+.uyari{color:#ffb4b4}
+</style></head><body><main>
+<div class="ust">
+  <h1>Envanter</h1>
+  <div class="meta" style="text-align:right"><span class="led" id="led"></span> <span id="durum">--</span><br>v1.0</div>
+</div>
+
+<div class="card" id="tok-kart" style="display:none">
+  <h3>Token gerekli</h3>
+  <div class="not">Envanter özel depoda duruyor. <b>robot-envanter-token.txt</b> içindeki <b>github_pat_...</b> satırını buraya yapıştır, Kaydet'e bas. Bir kez yeterli.</div>
+  <div class="tok">
+    <input type="password" id="token" placeholder="github_pat_..." autocomplete="off" autocapitalize="off" spellcheck="false">
+    <button class="goz" type="button" onclick="goz()" title="Göster/gizle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    <button class="btn btn-accent" type="button" onclick="tokenKaydet()">Kaydet</button>
+  </div>
+  <div class="not uyari" id="tok-hata"></div>
+</div>
+
+<div class="card">
+  <h3>Özet</h3>
+  <div class="satir"><span class="led gizli"></span><span class="et">Parça çeşidi</span><span class="dg" id="say">--</span></div>
+  <div class="satir"><span class="led gizli"></span><span class="et">Toplam adet</span><span class="dg" id="toplam">--</span></div>
+  <div class="satir"><span class="led" id="az-led"></span><span class="et">Azalan</span><span class="dg" id="az">--</span></div>
+  <div class="satir"><span class="led gizli"></span><span class="et">Son güncelleme</span><span class="dg" id="guncel">--</span></div>
+</div>
+
+<div class="card">
+  <h3>Parça ara</h3>
+  <input class="ara" id="ara" placeholder="ör. 10uF, röle, ESP32, A-1" oninput="ara()" autocomplete="off">
+  <div class="liste" id="sonuc"></div>
+</div>
+
+<div class="card" id="az-kart" style="display:none">
+  <h3>Azalanlar</h3>
+  <div class="liste" id="az-liste"></div>
+</div>
+
+<details class="card">
+  <summary>Kutulara göre</summary>
+  <div class="liste" id="kutular"></div>
+</details>
+
+<details class="card">
+  <summary>Ayarlar</summary>
+  <div class="not" style="margin-top:10px">Tam program (ekleme, düzenleme, fatura) PC'de çalışır; yalnız evde ve PC açıkken açılır.</div>
+  <div class="tok"><input id="pc-ip" placeholder="PC IP"><button class="btn" type="button" onclick="ipKaydet()">Kaydet</button></div>
+  <div><a class="bag" id="pc-bag" href="#">Tam programı aç</a></div>
+  <div class="tok" style="margin-top:14px"><button class="btn" type="button" onclick="tokenGoster()">Token değiştir</button></div>
+</details>
+
+<details class="card">
+  <summary>Bilgi</summary>
+  <div class="not" style="margin-top:10px">
+  Veri, PC'deki Akıllı Envanter programının her değişiklikte özel GitHub deposuna gönderdiği özetten okunur; PC kapalıyken de görünür. Robot da aynı özeti okur. İnternet yoksa son okunan veri gösterilir.<br>
+  Azalan: adedi, programda girilen minimum adede eşit ya da altında olan parça.<br><br>
+  <b>Sürüm geçmişi</b><br>
+  v1.0 (2026-11-17): ayrı sayfa; özet, arama, azalanlar, kutulara göre liste, PC programına bağlantı.
+  </div>
+</details>
+</main>
+<script>
+const URL_OZET='https://api.github.com/repos/Nedu41/AkilliEnvanter/contents/robot/envanter.json';
+const $=s=>document.querySelector(s);
+function lsAl(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function lsYaz(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+function yaz(id,t){const e=$(id);if(e)e.textContent=t;}
+function led(id,d){const e=$(id);if(!e)return;e.classList.remove('iyi','kotu');if(d)e.classList.add(d);}
+let veri=[];
+const kucuk=s=>String(s||'').toLocaleLowerCase('tr');
+const azMi=x=>x.m>0&&x.a<=x.m;
+
+function goz(){const i=$('#token');i.type=i.type==='password'?'text':'password';}
+function tokenGoster(h){$('#tok-kart').style.display='block';$('#token').value=lsAl('envanterToken')||'';yaz('#tok-hata',h||'');}
+function tokenKaydet(){const t=$('#token').value.trim();if(!t){yaz('#tok-hata','Kutu boş.');return;}lsYaz('envanterToken',t);$('#tok-kart').style.display='none';yukle();}
+function pcLink(){const ip=lsAl('envanterIp')||'192.168.1.138';$('#pc-ip').value=ip;$('#pc-bag').href='http://'+ip+':5000';$('#pc-bag').textContent='Tam programı aç ('+ip+':5000)';}
+function ipKaydet(){const ip=$('#pc-ip').value.trim();if(ip){lsYaz('envanterIp',ip);pcLink();}}
+pcLink();
+
+function satirYap(x){
+  const r=document.createElement('div');r.className='p';
+  const a=document.createElement('span');a.className='ad';a.textContent=x.p;
+  const n=document.createElement('span');n.className='ad-n'+(azMi(x)?' az':'');n.textContent=x.a+' adet';
+  const k=document.createElement('span');k.className='kt';k.textContent=x.k||'-';
+  r.append(a,n,k);return r;
+}
+function goster(d){
+  veri=d.parcalar||[];
+  const az=veri.filter(azMi);
+  yaz('#say',veri.length);
+  yaz('#toplam',veri.reduce((t,x)=>t+(+x.a||0),0));
+  yaz('#az',az.length?az.length+' parça':'yok');led('#az-led',az.length?'kotu':null);
+  yaz('#guncel',d.guncelleme||'--');
+  $('#az-kart').style.display=az.length?'block':'none';
+  const al=$('#az-liste');al.innerHTML='';az.forEach(x=>al.appendChild(satirYap(x)));
+  const gr={};veri.forEach(x=>{const k=x.k||'Kutusuz';(gr[k]=gr[k]||[]).push(x);});
+  const kl=$('#kutular');kl.innerHTML='';
+  Object.keys(gr).sort((a,b)=>a==='Kutusuz'?1:b==='Kutusuz'?-1:a.localeCompare(b,'tr',{numeric:true})).forEach(k=>{
+    const det=document.createElement('details');det.className='kutu';
+    const s=document.createElement('summary');s.textContent=k+' ';
+    const m=document.createElement('span');m.className='meta';m.textContent=gr[k].length+' çeşit';s.appendChild(m);
+    det.appendChild(s);
+    det.addEventListener('toggle',()=>{if(det.open&&det.children.length===1)gr[k].forEach(x=>det.appendChild(satirYap(x)));});
+    kl.appendChild(det);
+  });
+  ara();
+}
+function ara(){
+  const q=kucuk($('#ara').value.trim()),k=$('#sonuc');k.innerHTML='';
+  if(!q)return;
+  const b=veri.filter(x=>kucuk(x.p).includes(q)||kucuk(x.k).includes(q));
+  const not=t=>{const e=document.createElement('div');e.className='not';e.textContent=t;k.appendChild(e);};
+  if(!b.length){not('Bulunamadı.');return;}
+  b.slice(0,40).forEach(x=>k.appendChild(satirYap(x)));
+  if(b.length>40)not('+'+(b.length-40)+' sonuç daha, aramayı daralt.');
+}
+function yukle(){
+  const t=lsAl('envanterToken');
+  const o=lsAl('envanterOnbellek');
+  if(o){try{goster(JSON.parse(o));}catch(e){}}
+  if(!t){led('#led',null);yaz('#durum','token yok');tokenGoster();return;}
+  yaz('#durum','yükleniyor...');
+  fetch(URL_OZET,{headers:{'Authorization':'Bearer '+t,'Accept':'application/vnd.github.raw+json'},cache:'no-store'})
+  .then(r=>{if(r.status===401||r.status===403||r.status===404)throw new Error('token');if(!r.ok)throw new Error('HTTP '+r.status);return r.text();})
+  .then(s=>{goster(JSON.parse(s));lsYaz('envanterOnbellek',s);led('#led','iyi');yaz('#durum','güncel');})
+  .catch(e=>{led('#led','kotu');
+    if(e.message==='token'){yaz('#durum','token geçersiz');tokenGoster('Token kabul edilmedi (süresi dolmuş ya da yanlış kopyalanmış olabilir).');}
+    else yaz('#durum',o?'çevrimdışı, önbellek':'bağlanamadı');});
+}
+yukle();
+</script>
+</body></html>
