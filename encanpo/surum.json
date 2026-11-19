@@ -1,7 +1,7 @@
 {
-  "versionCode": 9,
-  "versionName": "1.8",
+  "versionCode": 10,
+  "versionName": "1.9",
   "apk": "encanpo.apk",
-  "sha256": "c3d87531fb0707570b76a25437b9387ccc4f65ad98666175bd057d188ee61851",
-  "notlar": "Sağlık kartı: SağlıkDU'nun kilitli özeti (parmak izi ile). Düğme ve kartların altından ışık sızar."
+  "sha256": "f44cfe92e82f00c3ecebf6523239c0c77547f0dc7d7c6f954fde0a8f2f907e43",
+  "notlar": "Ayarlar (tüm projeler): parmak iziyle açılır; SağlıkDU indirme şifresini telefondan değiştirme."
 }
