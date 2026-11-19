@@ -65,7 +65,7 @@ $('#indir').onclick = async () => {
     catch (e) { return durum('Şifre yanlış.', 'hata'); }
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([apk], { type: 'application/vnd.android.package-archive' }));
-    a.download = 'SaglikDU-' + (bilgi ? bilgi.surum : 'son') + '.apk';
+    a.download = 'saglikdu-v' + (bilgi ? bilgi.surum.replace(/\./g, '') : 'son') + '.apk';  // or. saglikdu-v061.apk
     document.body.appendChild(a); a.click(); a.remove();
     durum('İndirildi. Dosyayı açıp kur.', 'iyi');
   } catch (e) { durum('Olmadı: ' + e.message, 'hata'); }
