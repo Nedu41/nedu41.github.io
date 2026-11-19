@@ -34,7 +34,7 @@ input{width:100%;padding:12px 46px 12px 12px;border-radius:9px;border:1px solid 
   <section class="card">
     <h2>İndir <span id="surum"></span></h2>
     <label for="sifre">İndirme şifresi</label>
-    <div class="sifre"><input id="sifre" type="password" autocomplete="off">
+    <div class="sifre"><input id="sifre" type="password" inputmode="numeric" autocomplete="off">
       <button class="goz" id="goz" type="button" aria-label="Göster/gizle"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
     <button class="btn" id="indir" type="button">APK indir</button>
     <div id="durum"></div>
@@ -58,11 +58,18 @@ $('#indir').onclick = async () => {
     durum('İndiriliyor…');
     const v = new Uint8Array(await (await fetch((bilgi ? bilgi.dosya : 'saglikdu.bin') + '?t=' + Date.now())).arrayBuffer());
     durum('Çözülüyor…');
-    const ham = await crypto.subtle.importKey('raw', new TextEncoder().encode(sifre), 'PBKDF2', false, ['deriveKey']);
-    const anahtar = await crypto.subtle.deriveKey({ name: 'PBKDF2', salt: v.slice(0, 16), iterations: 200000, hash: 'SHA-256' }, ham, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
-    let apk;
-    try { apk = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: v.slice(16, 28) }, anahtar, v.slice(28)); }
+    // 1) sayfa sifresiyle anahtar.bin -> uygulama anahtari, 2) onunla APK
+    const coz = async (veri, parola) => {
+      const ham = await crypto.subtle.importKey('raw', new TextEncoder().encode(parola), 'PBKDF2', false, ['deriveKey']);
+      const k = await crypto.subtle.deriveKey({ name: 'PBKDF2', salt: veri.slice(0, 16), iterations: 200000, hash: 'SHA-256' }, ham, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+      return crypto.subtle.decrypt({ name: 'AES-GCM', iv: veri.slice(16, 28) }, k, veri.slice(28));
+    };
+    let uygAnahtar;
+    try { uygAnahtar = new TextDecoder().decode(await coz(new Uint8Array(await (await fetch('anahtar.bin?t=' + Date.now())).arrayBuffer()), sifre)); }
     catch (e) { return durum('Şifre yanlış.', 'hata'); }
+    let apk;
+    try { apk = await coz(v, uygAnahtar); }
+    catch (e) { return durum('Dosya çözülemedi; sayfayı yenileyip tekrar dene.', 'hata'); }
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([apk], { type: 'application/vnd.android.package-archive' }));
     a.download = 'saglikdu-v' + (bilgi ? bilgi.surum.replace(/\./g, '') : 'son') + '.apk';  // or. saglikdu-v061.apk
