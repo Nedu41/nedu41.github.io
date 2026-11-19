@@ -1,9 +1,9 @@
 {
- "kod": 11,
- "surum": "0.7.1",
+ "kod": 12,
+ "surum": "0.7.2",
  "tarih": "2026-11-19",
- "notlar": "İndirme sayfası şifresi artık encanPO → Ayarlar’dan telefondan değiştirilebilir.",
+ "notlar": "Ayarlar simgesi gerçek dişli oldu (güneşe benziyordu); + menüsünde de Ayarlar var.",
  "dosya": "saglikdu.bin",
- "sha256": "2dab6a089edad097c756b30fe2382e5b5559b68264cfc41c903e2461891a4324",
- "boyut": 23984853
+ "sha256": "9af35adb1b30c2434ddc1e48765bc43a316a018f4b06308dd552b015623c3582",
+ "boyut": 23985277
 }
