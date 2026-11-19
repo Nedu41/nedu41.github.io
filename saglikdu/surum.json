@@ -1,9 +1,9 @@
 {
- "kod": 9,
- "surum": "0.6.2",
+ "kod": 10,
+ "surum": "0.7.0",
  "tarih": "2026-11-19",
- "notlar": "Robota söylenen ölçüm, uygulama açıkken anında ekrana gelir: robot kaydedince telefona haber verir (kapatıp açmak gerekmez, sürekli sorgu yok).",
+ "notlar": "Doktora göster: tek ekranda ilaçlar, alerji, tansiyon ortalaması ve tablosu, şeker, kilo, şikayetler, tahlil notları; PDF/yazdır (beyaz A4). Yeni düzen: alt menü (Bugün, Ölçüm, İlaç, Günlük, Rapor), sağ üstte Ayarlar, + ile hızlı ekleme; sık kullandığın işlemler kendiliğinden öne gelir. Profesyonel rapor: ESC 2024 ev tansiyonu eşiği (135/85) ve ESH 7 günlük ortalama, AHA Life’s Essential 8 kalp-damar puanı, ADA düşük şeker seviyeleri ve tahmini HbA1c, öncelikli öneriler (neden + kaynak), doktora sorular, “Doktor için özet” paylaşma, kaynakça.",
  "dosya": "saglikdu.bin",
- "sha256": "347b34bf587ac29c249e827ea0b6060fe4ea4de803cb2afe8f8983d28b26d349",
- "boyut": 23973705
+ "sha256": "4a3ae3cd0bf5e036f5c5cccdf28e244c87d84b39c21c1e06ee2f961a7db6353d",
+ "boyut": 23984809
 }
