@@ -1,9 +1,9 @@
 {
- "kod": 8,
- "surum": "0.6.1",
+ "kod": 9,
+ "surum": "0.6.2",
  "tarih": "2026-11-19",
- "notlar": "Robot adresi otomatik: uygulama robotu ev ağında kendisi bulur (adres değişse de); yalnız eşleştirme kodu bir kez girilir. Robot kodu ekrana da yazar.",
+ "notlar": "Robota söylenen ölçüm, uygulama açıkken anında ekrana gelir: robot kaydedince telefona haber verir (kapatıp açmak gerekmez, sürekli sorgu yok).",
  "dosya": "saglikdu.bin",
- "sha256": "624d225c3dea8a8aace98e92f34d6f38650a1e22627534e92c805f978a35ca87",
- "boyut": 23973153
+ "sha256": "347b34bf587ac29c249e827ea0b6060fe4ea4de803cb2afe8f8983d28b26d349",
+ "boyut": 23973705
 }
