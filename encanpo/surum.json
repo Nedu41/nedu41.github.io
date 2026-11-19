@@ -1,7 +1,7 @@
 {
-  "versionCode": 8,
-  "versionName": "1.7",
+  "versionCode": 9,
+  "versionName": "1.8",
   "apk": "encanpo.apk",
-  "sha256": "ae1acc8b4353e5f5ca15ece7b673af5cddfde96a121e10a2bafb5cb4173516db",
-  "notlar": "Envanter kartı: atölye parçaları (adet, kutu, azalanlar), PC kapalıyken de açılır."
+  "sha256": "c3d87531fb0707570b76a25437b9387ccc4f65ad98666175bd057d188ee61851",
+  "notlar": "Sağlık kartı: SağlıkDU'nun kilitli özeti (parmak izi ile). Düğme ve kartların altından ışık sızar."
 }

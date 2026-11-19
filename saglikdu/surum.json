@@ -1,0 +1,9 @@
+{
+ "kod": 7,
+ "surum": "0.6.0",
+ "tarih": "2026-11-19",
+ "notlar": "Robot (Sofya): “tansiyonum 130’a 85, nabız 72, kaydet” dersen ölçüm uygulamaya aktarılır (ev WiFi’sinde, eşleştirme kodlu). Kendini güncelleme: Ayarlar → Güncelleme (nedu41.github.io/saglikdu, şifreli). Düzeltme: çay/kahve/alkol sayaçları artmıyordu.",
+ "dosya": "saglikdu.bin",
+ "sha256": "4e309cd9ab95b6b21916ebbc4802b18ae5d9aa533905653391ad49f360ba7d70",
+ "boyut": 23956513
+}
