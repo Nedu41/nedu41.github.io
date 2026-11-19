@@ -1,9 +1,9 @@
 {
- "kod": 14,
- "surum": "0.8.0",
+ "kod": 15,
+ "surum": "0.8.1",
  "tarih": "2026-11-19",
- "notlar": "Tahliller ve tetkikler kategorilere ayrıldı: tahliller (kan, idrar, diğer), görüntüleme (röntgen, ultrason, MR, tomografi, mamografi, kemik yoğunluğu), kalp ve diğer testler (EKG, EKO, efor, holter, solunum, endoskopi, patoloji), belgeler, randevular; liste kategoriye göre süzülür. e-Nabız: tahlil PDF’ini Paylaş → SağlıkDU ile ekle, değerler otomatik okunur.",
+ "notlar": "Robot açıksa ilaç ve randevu hatırlatmalarını sesli de söyler (genel cümle: ilaç adı söylenmez). Ayarlar → Robot → “Robotla dene”.",
  "dosya": "saglikdu.bin",
- "sha256": "b1440c9cb2d0cb71d0873820cb8c9fcc53007a699aa6cae10875b7dcea3c421d",
- "boyut": 23987381
+ "sha256": "b8f5eb243f9351621cf4790d12f71b0a9b2eb91442b10c2dddb7b7b0767e3647",
+ "boyut": 23987625
 }
