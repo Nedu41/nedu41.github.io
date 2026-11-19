@@ -1,9 +1,9 @@
 {
- "kod": 12,
- "surum": "0.7.2",
+ "kod": 13,
+ "surum": "0.7.3",
  "tarih": "2026-11-19",
- "notlar": "Ayarlar simgesi gerçek dişli oldu (güneşe benziyordu); + menüsünde de Ayarlar var.",
+ "notlar": "Ayarlar → “Bildirimler güvenilir olsun”: pil kısıtlamasını kaldırma, Xiaomi otomatik başlatma (telefon yeniden başlayınca hatırlatmalar için). + menüsünde “Kan tahlili”.",
  "dosya": "saglikdu.bin",
- "sha256": "9af35adb1b30c2434ddc1e48765bc43a316a018f4b06308dd552b015623c3582",
- "boyut": 23985277
+ "sha256": "cc7cfac245dd346e5fab99bb557322e795994d27c8591e6a0122eea4627493db",
+ "boyut": 23986065
 }
