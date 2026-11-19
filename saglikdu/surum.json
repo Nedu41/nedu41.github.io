@@ -1,9 +1,9 @@
 {
- "kod": 13,
- "surum": "0.7.3",
+ "kod": 14,
+ "surum": "0.8.0",
  "tarih": "2026-11-19",
- "notlar": "Ayarlar → “Bildirimler güvenilir olsun”: pil kısıtlamasını kaldırma, Xiaomi otomatik başlatma (telefon yeniden başlayınca hatırlatmalar için). + menüsünde “Kan tahlili”.",
+ "notlar": "Tahliller ve tetkikler kategorilere ayrıldı: tahliller (kan, idrar, diğer), görüntüleme (röntgen, ultrason, MR, tomografi, mamografi, kemik yoğunluğu), kalp ve diğer testler (EKG, EKO, efor, holter, solunum, endoskopi, patoloji), belgeler, randevular; liste kategoriye göre süzülür. e-Nabız: tahlil PDF’ini Paylaş → SağlıkDU ile ekle, değerler otomatik okunur.",
  "dosya": "saglikdu.bin",
- "sha256": "cc7cfac245dd346e5fab99bb557322e795994d27c8591e6a0122eea4627493db",
- "boyut": 23986065
+ "sha256": "b1440c9cb2d0cb71d0873820cb8c9fcc53007a699aa6cae10875b7dcea3c421d",
+ "boyut": 23987381
 }
