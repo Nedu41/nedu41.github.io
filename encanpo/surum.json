@@ -1,7 +1,7 @@
 {
-  "versionCode": 11,
-  "versionName": "1.10",
+  "versionCode": 12,
+  "versionName": "1.11",
   "apk": "encanpo.apk",
-  "sha256": "0cc31f6958e77377005461a845ac95d31c8546dcac7cb1d0534f340369838d11",
-  "notlar": "Ayarlar > Bildirimler (tüm projeler): Telegram, SağlıkDU, encanPO pil durumu ve tek dokunuşla ayar."
+  "sha256": "2cb152adacf64c083f07bb6eb3296228649c110478728c15ef81d403119927da",
+  "notlar": "Sağlık kartı TV'de: SağlıkDU genel değerlendirmesi telefondan ev ağında şifreli gönderilir, TV saklamaz. Telefondaki kilitli özette genel değerlendirme."
 }
