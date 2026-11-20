@@ -1,9 +1,9 @@
 {
- "kod": 15,
- "surum": "0.8.1",
- "tarih": "2026-11-19",
- "notlar": "Robot açıksa ilaç ve randevu hatırlatmalarını sesli de söyler (genel cümle: ilaç adı söylenmez). Ayarlar → Robot → “Robotla dene”.",
+ "kod": 16,
+ "surum": "0.9.0",
+ "tarih": "2026-11-20",
+ "notlar": "Tahlil ve tetkikler otomatik kategoriye girer (belge metninden ve dosya adından: kan, idrar, röntgen, ultrason, MR, BT, mamografi, EKG, EKO…); tarih belgeden alınır. Eski kayıtlar bir kez yeniden sınıflandı; kayıtta “Belgeden yeniden oku”. Liste aylara ayrıldı, referans dışı değerler renkli, raporların sonuç cümlesi görünür. “Yorum”: değerlerin ne anlama geldiği, birlikte okuma (ör. demir eksikliği, tiroid), kılavuz eşikleri (ADA, ESC, KDIGO), önceki sonuçla kıyas, rapordaki tıbbi terimlerin sade karşılığı, BI-RADS/TI-RADS/PI-RADS, aciliyet derecesi. Telefonda hazırlanır, internete gitmez. İdrardaki Negatif/Pozitif satırları da okunur. Aynı sonuç iki kez eklenirse tanınır: kaydederken sorulur, var olan tekrarlar listede gizlenir (Ayarlar → Tekrarlanan sonuçlar ile silinir). Bir değere ya da rapor terimine dokununca geniş açıklama: ne ölçer, neden yüksek/düşük olabilir, ne yapmalı, hangi tetkikler istenebilir, ne zaman acil; önceki sonuçlara göre gelişme (düzeliyor / kötüleşiyor / normale döndü) ve seyir tablosu. Günün yorumu: uygulama öne gelince yenilenir, önce son tansiyon ölçümü, son 14 günün tahlil özeti, saati ileride girilmiş kayıt uyarısı. Rapor sekmesinde “Genel sağlık değerlendirmesi”: tüm tahlil, rapor, ölçüm ve ilaçlardan düz anlatımlı özet; Geçmiş (ne düzeldi/kötüleşti), Bugün (son değerler, ev tansiyonu, kalp-damar puanı), Gelecek (zamanı gelen kontroller, rapordaki kontrol önerileri, yaşa göre KETEM taramaları, riskler), öncelikli öneriler. Sesli oku: yorum, değer ayrıntısı ve genel değerlendirme telefonun Türkçe sesiyle okunur (internet gerekmez). Robota “salı 14:30 kardiyoloji randevum var, kaydet” dersen Randevular’a hatırlatmalı eklenir. Düzeltme: robottan gelen ölçümler 3 saat ileri yazılıyordu (eskiler de düzeltildi). Rapor’da kaynaklar, doktora sorular, öneriler ve kalp-damar puanı kapalı kart; Bugün’de en yakın 3 randevu (60 gün); Ölçüm altında ayrı “Tahliller” ve “Randevular” sekmeleri. Robota söylenen randevu sesle düzeltilebilir (“poliklinik 17’yi de ekle”, “saati 11:30 yap”); robot eksik bilgileri (saat, bölüm, hastane, doktor) tek tek sorar. Genel değerlendirmede “Özetle dikkat et”, gidişat (iyileşme/kötüleşme), beslenme (ye / azalt) ve sana sorular (Evet → şikayet kaydı). “TV’de göster”: genel değerlendirme ev ağında TV’deki encanPO’ya şifreli gider (kodla eşleşme, internet yok); TV saklamaz, 10 dakikada siler. encanPO’nun kilitli özetinde genel değerlendirme de var.",
  "dosya": "saglikdu.bin",
- "sha256": "b8f5eb243f9351621cf4790d12f71b0a9b2eb91442b10c2dddb7b7b0767e3647",
- "boyut": 23987625
+ "sha256": "acfe78beb09de7f16802464738115f84898c2657c0e88a7f8351d7dfa4acf053",
+ "boyut": 24043980
 }
