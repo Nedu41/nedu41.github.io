@@ -1,7 +1,7 @@
 {
-  "versionCode": 12,
-  "versionName": "1.11",
+  "versionCode": 14,
+  "versionName": "1.13",
   "apk": "encanpo.apk",
-  "sha256": "2cb152adacf64c083f07bb6eb3296228649c110478728c15ef81d403119927da",
-  "notlar": "Sağlık kartı TV'de: SağlıkDU genel değerlendirmesi telefondan ev ağında şifreli gönderilir, TV saklamaz. Telefondaki kilitli özette genel değerlendirme."
+  "sha256": "3a3b4028334ac1a4ec8f84be212e6efabc6d43512db6157d8e90b9aeb6fd24fb",
+  "notlar": "Ayarlar > Portal: ana sayfa giriş şifresi telefondan değiştirilir. Bildirimler: Telegram satırında envanter fiyat alarmı."
 }

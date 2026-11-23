@@ -25,7 +25,8 @@ if hedef.exists():
         AESGCM(turet(e[:16])).decrypt(e[16:28], e[28:], None)
         tuz = e[:16]
     except Exception:
-        pass
+        if '--sifre-degistir' not in sys.argv:
+            sys.exit('portal.bin bu sifreyle acilmiyor (encanPO degistirmis olabilir). sifre.txt guncelle ya da --sifre-degistir')
 iv = os.urandom(12)
 hedef.write_bytes(tuz + iv + AESGCM(turet(tuz)).encrypt(iv, veri, None))
 print('yazildi', hedef)
