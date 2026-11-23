@@ -26,12 +26,14 @@ body{color-scheme:dark;background-color:#08090a;background-attachment:fixed;back
 .btn.btn-on.ton-kirmizi{--t:255,85,85}.btn.btn-on.ton-amber{--t:255,190,70}.btn.btn-on.ton-mavi{--t:70,150,255}.btn.btn-on.sabit{animation:none}
 @keyframes btnNefes{50%{box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 0 5px 1px rgba(var(--t),.45),0 0 16px 3px rgba(var(--t),.22);text-shadow:0 0 3px rgb(var(--t)),0 0 7px rgba(var(--t),.7),0 0 14px rgba(var(--t),.5)}}
 @media(prefers-reduced-motion:reduce){.btn.btn-on{animation:none}}
-/* Kapali buton: altindan soluk gri isik sizar (arkadan aydinlatmali tus) - siyah zeminde kenari belli olsun; renksiz, acik (neon) durumla karismaz */
-.btn:not(.btn-on){box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 1px 2px rgba(0,0,0,.5),0 6px 10px -4px rgba(185,195,215,.6),0 3px 14px -6px rgba(185,195,215,.35) !important}
-.btn:not(.btn-on):active{box-shadow:inset 0 2px 5px rgba(0,0,0,.6),0 2px 4px -2px rgba(185,195,215,.22) !important}
+/* Kapali buton (2026-11-23): kabarik tus - gri yuz, acik kenar, alt dudak, altindan isik; renksiz, acik (neon) durumla karismaz */
+.btn:not(.btn-on){background-color:#171a20;background-image:linear-gradient(180deg,#353b46 0,#22262e 45%,#15181d 100%);border:1px solid #6b7280;color:#dbe0e8;box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 3px 0 #8b93a1,0 4px 0 #000,0 9px 14px -3px rgba(200,210,228,.75) !important}
+.btn:not(.btn-on):active{transform:translateY(3px);color:rgb(var(--t,255,255,255));box-shadow:inset 0 2px 5px rgba(0,0,0,.6),0 0 0 #8b93a1,0 2px 6px rgba(200,210,228,.35) !important}
+.btn:not(.btn-on):disabled{opacity:.45}
 .nav,.sekmeler,.dark .sekmeler{background:rgba(5,5,6,.35)}
 body .nav button,body .sekme-btn{background:transparent;border:1px solid #3a3f48;color:#a3a8b2;box-shadow:none}
 body .nav button.active,body .sekme-btn.aktif{background:transparent;color:#9ec3f5;border-color:#60a5fa;text-shadow:0 0 6px rgba(96,165,250,.8);box-shadow:0 0 8px rgba(96,165,250,.45)}
+body .nav button:not(.active),body .sekme-btn:not(.aktif){background:linear-gradient(180deg,#2a2f38,#16191e);border-color:#6b7280;color:#dbe0e8;box-shadow:0 2px 0 #7d8593,0 7px 10px -4px rgba(200,210,228,.6)}
 input,select,.input,textarea{background:#060708;border:1px solid #3a3f48;color:#e5e7eb}
 .tema-btn{display:none}
 /* === /PANO TEMASI === */
@@ -47,7 +49,7 @@ main{max-width:1100px;margin:0 auto;padding:16px 16px 40px}
 .ust .meta{text-align:right}
 .nav{display:flex;gap:8px;padding:6px;border-radius:8px;margin-bottom:6px}
 body .nav button{flex:1;padding:10px 6px;border-radius:8px;font:600 14px system-ui;cursor:pointer}
-body .nav button:not(.active){box-shadow:0 6px 10px -4px rgba(185,195,215,.6)}
+body .nav button:not(.active){box-shadow:0 2px 0 #7d8593,0 7px 10px -4px rgba(200,210,228,.6)}
 h2{font:700 13px Consolas,monospace;letter-spacing:1.6px;text-transform:uppercase;color:#dcd2ac;margin:20px 2px 8px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:14px}
 .grid.dar{grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr))}
