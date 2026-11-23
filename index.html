@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Projelerim</title>
+<meta name="robots" content="noindex">
 <meta name="theme-color" content="#060607">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
@@ -36,120 +37,180 @@ input,select,.input,textarea{background:#060708;border:1px solid #3a3f48;color:#
 /* === /PANO TEMASI === */
 
 /* === Portal === */
-body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text)}
-main{max-width:560px;margin:0 auto;padding:18px 16px 40px}
-.ust{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text)}
+main{max-width:1100px;margin:0 auto;padding:16px 16px 40px}
+[hidden]{display:none!important}
+.ust{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
 .ust h1{font-size:20px;margin:0;color:#dcd2ac;letter-spacing:.5px}
 .meta{font-size:12px;color:var(--muted)}
-.card{display:block;padding:16px 26px;margin:14px 0;color:var(--text);text-decoration:none}
-.kbas{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.kbas b{font-size:16px;flex:1}
+.ust .meta{text-align:right}
+.nav{display:flex;gap:8px;padding:6px;border-radius:8px;margin-bottom:6px}
+body .nav button{flex:1;padding:10px 6px;border-radius:8px;font:600 14px system-ui;cursor:pointer}
+body .nav button:not(.active){box-shadow:0 6px 10px -4px rgba(185,195,215,.6)}
+h2{font:700 13px Consolas,monospace;letter-spacing:1.6px;text-transform:uppercase;color:#dcd2ac;margin:20px 2px 8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:14px}
+.grid.dar{grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr))}
+.card{border-left-color:#4b515c;padding:16px 24px;margin:12px 0;color:var(--text);text-decoration:none;min-width:0}
+.grid .card{margin:0;display:flex;flex-direction:column}
+a.card:hover,a.card:focus-visible{border-color:#8a93a3}
+.kbas{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.kbas b{font-size:16px;flex:1;min-width:0;overflow-wrap:anywhere}
 .led{width:12px;height:12px;border-radius:50%;background:#3a3f48;box-shadow:inset 0 0 2px #000;flex:none}
 .led.iyi{background:#22e660;box-shadow:0 0 6px #22e660,0 0 14px rgba(34,230,96,.6)}
-.led.kotu{background:#ff5555;box-shadow:0 0 6px #ff5555,0 0 14px rgba(255,85,85,.6)}
-.satir{display:flex;align-items:center;gap:8px;font-size:14px;padding:3px 0}
-.satir .et{width:118px;color:var(--muted)}
-.satir .dg{font-variant-numeric:tabular-nums}
-.bos{visibility:hidden}
-.btn{padding:4px 12px;font-size:12px}
+.led.kotu{background:#f55;box-shadow:0 0 6px #f55,0 0 14px rgba(255,85,85,.6)}
+.satir{display:flex;gap:8px;font-size:14px;padding:2px 0;align-items:center}
+.satir .et{width:82px;color:var(--muted)}
+.dg{font-variant-numeric:tabular-nums}
+.alt{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:12px}
+.btn{padding:9px 14px;font:600 13px system-ui;text-decoration:none;color:#a3a8b2}
+label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+.giz{display:flex;gap:8px}
+input{width:100%;padding:10px;border-radius:8px;font:16px system-ui;min-width:0}
+.giz .btn svg{display:block;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2}
+.hata{color:#ff8a8a;font-size:13px;min-height:18px;margin-top:8px}
+#kilit{max-width:400px;margin:14vh auto 0}
+ul{padding-left:18px;margin:6px 0;font-size:14px;line-height:1.5}
 </style></head><body><main>
-<div class="ust">
-  <h1>Projelerim</h1>
-  <div style="text-align:right"><div class="meta" id="baglanti">Bağlantı yok</div>
-  <button class="btn" id="giris-btn" onclick="girisDegistir()">Giriş</button></div>
-</div>
-
-<a class="card" href="kalburum/">
-  <div class="kbas"><span class="led" id="k-online"></span><b>Kalburum</b><span class="meta" id="k-yas">--</span></div>
-  <div class="satir"><span class="led" id="k-alarm-led"></span><span class="et">Alarm</span><span class="dg" id="k-alarm">--</span></div>
-  <div class="satir"><span class="led bos"></span><span class="et">Depo</span><span class="dg" id="k-depo">--</span></div>
-  <div class="satir"><span class="led bos"></span><span class="et">Akü</span><span class="dg" id="k-aku">--</span></div>
-  <div class="satir"><span class="led bos"></span><span class="et">Ana güç</span><span class="dg" id="k-guc">--</span></div>
-  <div class="satir"><span class="led bos"></span><span class="et">İnternet</span><span class="dg" id="k-net">--</span></div>
-</a>
-
-<div class="card" style="cursor:pointer" onclick="location.href='ev-lamba/'">
-  <div class="kbas"><span class="led"></span><b>Ev Lamba</b><span class="meta">canlı veri yok</span></div>
-  <div class="meta">Lamba ve tatil kontrolü (internet, her yerden) · <a id="hub-yerel" href="http://merkezihub.local" onclick="event.stopPropagation()" style="color:#a3a8b2">Evdeyim: HUB paneli (yerel)</a></div>
-</div>
-
-<div class="card">
-  <div class="kbas"><span class="led"></span><b>LED Pano</b><span class="meta">bağlı değil</span></div>
-</div>
-</main>
-<script src="https://unpkg.com/mqtt@4.3.7/dist/mqtt.min.js"></script>
+<section id="kilit" class="card" hidden><h3>Projelerim</h3>
+<form id="kform"><label for="kp">Giriş şifresi</label>
+<div class="giz"><input id="kp" type="password" autocomplete="current-password"><button type="button" class="btn goz" data-i="kp"></button></div>
+<div class="alt"><button class="btn btn-primary" type="submit">Giriş</button></div><div class="hata" id="khata" role="status"></div>
+<div class="meta">Bu cihazda bir kez sorulur.</div></form></section>
+<div id="icerik" hidden>
+<div class="ust"><h1>Projelerim</h1><div class="meta"><div id="baglanti">Canlı veri: giriş yapılmadı</div><div>v2.0.0 • 23.11.2026</div></div></div>
+<div class="nav"><button data-s="ana">Projeler</button><button data-s="kod">Kod</button><button data-s="ayar">Ayarlar</button></div>
+<section id="s-ana">
+<h2>Cihazlar</h2><div class="grid" id="cihazlar"></div>
+<div class="alt"><button class="btn" id="tara">Ev ağında tara</button><span class="meta" id="tdurum" style="align-self:center"></span></div>
+<h2>Uygulamalar</h2><div class="grid" id="uygulamalar"></div></section>
+<section id="s-kod" hidden><h2>GitHub</h2><div class="meta" style="margin-bottom:8px">Özel depolar için GitHub oturumu gerekir.</div><div class="grid dar" id="kod"></div>
+<h2>Yalnız bilgisayarda (C:\Kodlar)</h2><div class="grid dar" id="pc"></div></section>
+<section id="s-ayar" hidden>
+<div class="card"><h3>Canlı veri (MQTT)</h3><form id="mform"><label for="mu">Kullanıcı adı</label><input id="mu" autocomplete="off">
+<label for="mp">Şifre</label><div class="giz"><input id="mp" type="password" autocomplete="off"><button type="button" class="btn goz" data-i="mp"></button></div>
+<div class="alt"><button class="btn" type="submit">Kaydet ve bağlan</button><button class="btn btn-danger" type="button" id="mcik">Kayıtlı bilgiyi sil</button></div></form></div>
+<div class="card"><h3>Cihaz adresleri</h3><div class="meta">IP değişirse buraya yaz. Boş = varsayılan.</div><div id="adres"></div><div class="alt"><button class="btn" id="akaydet">Kaydet</button></div></div>
+<div class="card"><h3>Oturum</h3><div class="meta">Bu cihazdaki kayıtlı girişi siler, şifre yeniden sorulur.</div><div class="alt"><button class="btn btn-danger" id="cikis">Çıkış yap</button></div></div>
+<div class="card"><h3>Bilgi</h3><ul><li>Yeşil: cihaz yanıt veriyor. Kırmızı: cihaz çevrimdışı olduğunu bildirdi. Gri: bilinmiyor ya da bu ağdan ulaşılamadı.</li><li>LED Pano, Sudepo ve Sofya internete durum göndermez; yalnız ev ağında, tarama ile görünür.</li><li>Proje listesi şifreli saklanır, giriş bu cihazda kalır.</li></ul><h3>Sürüm geçmişi</h3><ul><li>2.0.0 (23.11.2026): şifreli giriş, tüm projeler, gerçek cihaz durumu, sekmeler, geniş ekran düzeni.</li><li>1.x: Kalburum, Ev Lamba ve LED Pano kartları.</li></ul></div></section>
+</div></main>
+<script src="https://unpkg.com/mqtt@4.3.7/dist/mqtt.min.js" defer></script>
 <script>
-// Ortak EMQX Cloud kumesi. Giris bilgisi kalburum/ sayfasiyla AYNI anahtarlarda
-// (ayni origin -> ayni localStorage), bir kez girilir.
 const URL_MQ='wss://h11f4d1a.ala.eu-central-1.emqxsl.com:8084/mqtt';
 const $=s=>document.querySelector(s);
-function lsAl(k){try{return localStorage.getItem(k);}catch(e){return null;}}
-function lsYaz(k,v){try{localStorage.setItem(k,v);}catch(e){}}
-let mq=null,kalp=null,kSon=0,kOnline=null;
-// HUB IP'si ev-lamba/ sayfasi MQTT'den ogrenip kaydeder (ayni origin): telefonda merkezihub.local cozulmeyebilir
-function hubLink(){const ip=lsAl('hubIp');const a=document.getElementById('hub-yerel');if(ip&&a){a.href='http://'+ip;a.textContent='Evdeyim: HUB paneli ('+ip+')';}}
-hubLink();
+const lsAl=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
+const lsYaz=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const lsSil=k=>{try{localStorage.removeItem(k)}catch(e){}};
+const yaz=(id,t)=>{const e=$(id);if(e)e.textContent=t};
+const led=(id,d)=>{const e=$(id);if(e)e.className='led'+(d?' '+d:'')};
+function el(tag,o={},...c){const e=document.createElement(tag);Object.assign(e,o);e.append(...c);return e}
+document.querySelectorAll('.goz').forEach(b=>{b.setAttribute('aria-label','Göster/gizle');b.innerHTML='<svg viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>';b.onclick=()=>{const i=$('#'+b.dataset.i);i.type=i.type==='password'?'text':'password'}});
 
-// Yalniz sayfa ekrandayken: arka planda unutulan sekme Kalburum'u surekli canli yayinda (5 sn) tutup bahce kotasini yemesin.
-function izleyici(){if(mq&&mq.connected&&document.visibilityState==='visible')mq.publish('kalburum/izleyici','1');}
+// --- Kilit: portal.bin = tuz16|iv12|AES-GCM(proje listesi). Turetilen anahtar bu cihazda saklanir.
+let V=null;
+const b64=u=>btoa(String.fromCharCode(...u)),unb64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function kasa(){const r=await fetch('portal.bin');if(!r.ok)throw new Error('ag');return new Uint8Array(await r.arrayBuffer())}
+async function coz(v,ham){const k=await crypto.subtle.importKey('raw',ham,'AES-GCM',false,['decrypt']);return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:v.slice(16,28)},k,v.slice(28))))}
+async function turet(v,p){const h=await crypto.subtle.importKey('raw',new TextEncoder().encode(p),'PBKDF2',false,['deriveBits']);return new Uint8Array(await crypto.subtle.deriveBits({name:'PBKDF2',salt:v.slice(0,16),iterations:600000,hash:'SHA-256'},h,256))}
+function kilitGoster(m){$('#kilit').hidden=false;yaz('#khata',m||'');$('#kp').focus()}
+async function basla(){
+  const a=lsAl('portalAnahtar');
+  if(!a)return kilitGoster();
+  let v;try{v=await kasa()}catch(e){return kilitGoster('Bağlantı yok, sayfayı yenile.')}
+  try{V=await coz(v,unb64(a))}catch(e){lsSil('portalAnahtar');return kilitGoster('Şifre değişmiş, yeniden gir.')}
+  ac();
+}
+$('#kform').onsubmit=async e=>{e.preventDefault();const p=$('#kp').value.trim();if(!p)return;yaz('#khata','Açılıyor…');
+  let v;try{v=await kasa()}catch(x){return yaz('#khata','Bağlantı yok, tekrar dene.')}
+  try{const h=await turet(v,p);V=await coz(v,h);lsYaz('portalAnahtar',b64(h))}catch(x){return yaz('#khata','Şifre yanlış.')}
+  $('#kp').value='';if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});ac()};
+$('#cikis').onclick=()=>{if(confirm('Bu cihazdaki giriş silinsin mi?')){lsSil('portalAnahtar');location.reload()}};
+
+// --- Sekmeler
+function sekme(s){document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.s===s));['ana','kod','ayar'].forEach(x=>$('#s-'+x).hidden=x!==s)}
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>sekme(b.dataset.s));
+
+// --- Cihazlar
+const adresler=c=>[...new Set([lsAl('adres_'+c.id),c.id==='hub'?lsAl('hubIp'):null,...c.yerel].filter(Boolean))];
+const kok=(c,a)=>'http://'+a+(c.port?':'+c.port:'');
+function ac(){
+  $('#kilit').hidden=true;$('#icerik').hidden=false;sekme('ana');
+  V.cihazlar.forEach(c=>{
+    const k=el('div',{className:'card'},el('div',{className:'kbas'},el('span',{className:'led',id:'l-'+c.id}),el('b',{textContent:c.ad}),el('span',{className:'meta',id:'d-'+c.id,textContent:'bilinmiyor'})),el('div',{className:'meta',textContent:c.ac}));
+    if(c.canli==='kalburum')[['Alarm','k-alarm'],['Depo','k-depo'],['Akü','k-aku'],['Ana güç','k-guc'],['İnternet','k-net']].forEach(([t,i])=>k.append(el('div',{className:'satir'},el('span',{className:'et',textContent:t}),el('span',{className:'dg',id:i,textContent:'--'}),...(i==='k-alarm'?[el('span',{className:'led',id:'k-alarm-led'})]:[]))));
+    const alt=el('div',{className:'alt'});
+    if(c.uzak)alt.append(el('a',{className:'btn',href:c.uzak,textContent:'Aç'}));
+    if(!c.sayfaYok)alt.append(el('a',{className:'btn',id:'y-'+c.id,href:kok(c,adresler(c)[0]),textContent:'Evdeyim'}));
+    if(alt.children.length)k.append(alt);
+    $('#cihazlar').append(k);
+    $('#adres').append(el('label',{htmlFor:'a-'+c.id,textContent:c.ad}),el('input',{id:'a-'+c.id,value:lsAl('adres_'+c.id)||'',placeholder:c.yerel[0]}));
+  });
+  const kart=(u,h,a)=>el('a',{className:'card',href:u},el('div',{className:'kbas'},el('b',{textContent:h})),el('div',{className:'meta',textContent:a}));
+  V.uygulamalar.forEach(u=>{const k=kart(u.url,u.ad,u.ac);$('#uygulamalar').append(k);
+    if(u.surum)fetch(u.surum).then(r=>r.json()).then(s=>k.firstChild.append(el('span',{className:'meta',textContent:'v'+(s.versionName||s.surum)}))).catch(()=>{})});
+  V.kod.forEach(([d,a])=>$('#kod').append(kart('https://github.com/Nedu41/'+d,d,a)));
+  V.pc.forEach(([d,a])=>$('#pc').append(el('div',{className:'card'},el('div',{className:'kbas'},el('b',{textContent:d})),el('div',{className:'meta',textContent:a}))));
+  $('#mu').value=lsAl('uzakKullanici')||'';$('#mp').value=lsAl('uzakSifre')||'';
+  baglan();otoTara();
+}
+$('#akaydet').onclick=()=>{V.cihazlar.forEach(c=>{const d=$('#a-'+c.id).value.trim().replace(/^https?:\/\//,'').replace(/[^\w.:-].*$/,'');d?lsYaz('adres_'+c.id,d):lsSil('adres_'+c.id);const y=$('#y-'+c.id);if(y)y.href=kok(c,adresler(c)[0])});sekme('ana')};
+
+// --- Ev agi taramasi (Chrome yerel ag izni). Cevap okunmaz, yalniz ulasilabilirlik.
+async function dene(u){const k=new AbortController(),z=setTimeout(()=>k.abort(),4000);try{await fetch(u,{mode:'no-cors',cache:'no-store',targetAddressSpace:'local',signal:k.signal});return true}catch(e){return false}finally{clearTimeout(z)}}
+let taraniyor=false;
+async function tara(){
+  if(taraniyor)return;taraniyor=true;yaz('#tdurum','Taranıyor…');let n=0;
+  await Promise.all(V.cihazlar.map(async c=>{
+    for(const a of adresler(c))if(await dene(kok(c,a)+c.kimlik)){n++;c.evde=true;led('#l-'+c.id,'iyi');yaz('#d-'+c.id,'ev ağında açık');const y=$('#y-'+c.id);if(y)y.href=kok(c,a);return}
+    c.evde=false;if(!c.canli){led('#l-'+c.id,null);yaz('#d-'+c.id,'bu ağdan ulaşılamadı')}
+  }));
+  yaz('#tdurum',n?n+' cihaz bulundu':'Cihaz bulunamadı (evde değilsin ya da tarayıcı izin vermedi)');taraniyor=false;etiket();
+}
+$('#tara').onclick=tara;
+async function otoTara(){for(const n of ['local-network','local-network-access'])try{if((await navigator.permissions.query({name:n})).state==='granted')return tara()}catch(e){}}
+
+// --- Canli veri (MQTT). Kimlik kalburum/ ve ev-lamba/ ile ayni anahtarlarda.
+let mq=null,kalp=null,kSon=0,kOnline=null,hSon=0;
+// Yalniz sayfa ekrandayken: arka planda kalan sekme bahce kotasini yemesin.
+function izleyici(){if(mq&&mq.connected&&document.visibilityState==='visible')mq.publish('kalburum/izleyici','1')}
 document.addEventListener('visibilitychange',izleyici);
-function yaz(id,t){const e=$(id);if(e)e.textContent=t;}
-function led(id,durum){const e=$(id);if(!e)return;e.classList.remove('iyi','kotu');if(durum)e.classList.add(durum);}
-function sayi(v,ek,h){return (typeof v==='number'&&isFinite(v)&&v!==0)?v.toFixed(h)+ek:'--';}
-
+const sayi=(v,e,h)=>(typeof v==='number'&&isFinite(v)&&v!==0)?v.toFixed(h)+e:'--';
 function kalburumIsle(d){
-  const a=d.alarm||{},k=d.konteyner||{};
-  const tetik=a.panic||(a.enabled&&a.trigger_mask)||a.pending||k.gaz||k.duman||k.swan_alarm;
-  yaz('#k-alarm',a.panic?'PANİK':tetik?'Tetiklendi':(a.enabled||k.enabled)?'Kurulu':'Kapalı');
-  led('#k-alarm-led',tetik?'kotu':null);
-  yaz('#k-depo',d.esp8266_online&&!d.sensor_err?sayi(d.level_percent,' %',0):'--');
+  const a=d.alarm||{},k=d.konteyner||{},t=a.panic||(a.enabled&&a.trigger_mask)||a.pending||k.gaz||k.duman||k.swan_alarm;
+  yaz('#k-alarm',a.panic?'PANİK':t?'Tetiklendi':(a.enabled||k.enabled)?'Kurulu':'Kapalı');led('#k-alarm-led',t?'kotu':null);
+  yaz('#k-depo',d.esp8266_online&&!d.sensor_err?(typeof d.level_percent==='number'?d.level_percent.toFixed(0)+' %':'--'):'--');
   yaz('#k-aku',(d.battery&&d.battery.online)?sayi(d.battery.voltage,' V',1):'--');
   yaz('#k-guc',(d.ana_guc&&d.ana_guc.ok)?sayi(d.ana_guc.volt,' V',1):'--');
-  yaz('#k-net',d.net_ay_bayt!=null?((d.net_ay_bayt/1048576).toFixed(1)+' MB / 5 GB'):'--');
+  yaz('#k-net',d.net_ay_bayt!=null?(d.net_ay_bayt/1048576).toFixed(1)+' MB / 5 GB':'--');
 }
+const once=s=>s<120?s+' sn önce':Math.round(s/60)+' dk önce';
 function etiket(){
-  if(!mq||!mq.connected){led('#k-online',null);yaz('#k-yas','--');return;}
-  const yas=kSon?Math.round((Date.now()-kSon)/1000):null;
-  led('#k-online',kOnline===false?'kotu':(kOnline&&yas!=null&&yas<1200)?'iyi':null);
-  yaz('#k-yas',kOnline===false?'çevrimdışı':yas==null?'veri bekleniyor':yas<120?yas+' sn önce':Math.round(yas/60)+' dk önce');
+  if(!V)return;const b=mq&&mq.connected,evde=id=>(V.cihazlar.find(c=>c.id===id)||{}).evde;
+  const ks=kSon?Math.round((Date.now()-kSon)/1000):null,hs=hSon?Math.round((Date.now()-hSon)/1000):null;
+  if(evde('kalburum')){led('#l-kalburum','iyi');yaz('#d-kalburum',b&&ks!=null?once(ks):'ev ağında açık')}
+  else{led('#l-kalburum',!b?null:kOnline===false?'kotu':(kOnline&&ks!=null&&ks<1200)?'iyi':null);yaz('#d-kalburum',!b?'canlı veri yok':kOnline===false?'çevrimdışı':ks==null?'veri bekleniyor':once(ks))}
+  if(evde('hub')){led('#l-hub','iyi');yaz('#d-hub',hs!=null&&hs<600?once(hs):'ev ağında açık')}
+  else{led('#l-hub',b&&hs!=null&&hs<600?'iyi':null);yaz('#d-hub',!b?'canlı veri yok':hs==null?'veri bekleniyor':once(hs))}
 }
 setInterval(etiket,5000);
-
 function baglan(){
-  let u=lsAl('uzakKullanici'),p=lsAl('uzakSifre');
-  if(!u||!p){
-    u=prompt('MQTT kullanıcı adı',u||''); if(!u) return;
-    p=prompt('MQTT şifresi'); if(!p) return;
-    lsYaz('uzakKullanici',u); lsYaz('uzakSifre',p);
-  }
-  if(typeof mqtt==='undefined'){yaz('#baglanti','MQTT kütüphanesi yüklenemedi');return;}
-  yaz('#baglanti','Bağlanıyor...');
+  const u=lsAl('uzakKullanici'),p=lsAl('uzakSifre');
+  if(!u||!p){yaz('#baglanti','Canlı veri: Ayarlar’dan giriş yap');return etiket()}
+  if(typeof mqtt==='undefined')return yaz('#baglanti','MQTT kütüphanesi yüklenemedi');
+  yaz('#baglanti','Bağlanıyor…');
   mq=mqtt.connect(URL_MQ,{username:u,password:p,clientId:'portal-'+Math.random().toString(16).slice(2,10),reconnectPeriod:5000,connectTimeout:10000});
-  mq.on('connect',()=>{
-    yaz('#baglanti','Bağlı: '+u); $('#giris-btn').textContent='Çıkış';
-    mq.subscribe(['kalburum/durum','kalburum/online','evlamba/tatil/durum']);  // sonuncu: HUB kendi IP'sini 3 dk'da bir duyurur
-    izleyici();
-    if(!kalp) kalp=setInterval(izleyici,20000);
-  });
-  mq.on('message',(t,m)=>{
-    const s=m.toString();
-    if(t==='kalburum/online'){kOnline=(s==='1');}
-    else if(t==='kalburum/durum'){kSon=Date.now();try{kalburumIsle(JSON.parse(s));}catch(e){}}
-    else if(t==='evlamba/tatil/durum'){try{const d=JSON.parse(s);if(d.ip){lsYaz('hubIp',d.ip);hubLink();}}catch(e){}}
-    etiket();
-  });
-  mq.on('error',e=>{
-    const m=String(e&&e.message||e); yaz('#baglanti','Hata: '+m);
-    if(/auth|Not authorized|Bad user/i.test(m)){lsYaz('uzakSifre','');kes();}
-  });
-  mq.on('close',etiket);
+  mq.on('connect',()=>{yaz('#baglanti','Canlı veri: bağlı');mq.subscribe(['kalburum/durum','kalburum/online','evlamba/tatil/durum']);izleyici();if(!kalp)kalp=setInterval(izleyici,20000);etiket()});
+  mq.on('message',(t,m,pk)=>{const s=m.toString();
+    if(t==='kalburum/online')kOnline=s==='1';
+    else if(t==='kalburum/durum'){if(!pk.retain)kSon=Date.now();try{kalburumIsle(JSON.parse(s))}catch(e){}}
+    else if(t==='evlamba/tatil/durum'){if(!pk.retain)hSon=Date.now();try{const d=JSON.parse(s);if(d.ip&&/^[\d.]+$/.test(d.ip)){lsYaz('hubIp',d.ip);const c=V.cihazlar.find(x=>x.id==='hub'),y=$('#y-hub');if(c&&y&&!c.evde)y.href=kok(c,adresler(c)[0])}}catch(e){}}
+    etiket()});
+  mq.on('error',e=>{const m=String(e&&e.message||e);if(/auth|Bad user/i.test(m)){lsSil('uzakSifre');kes();yaz('#baglanti','Canlı veri: giriş reddedildi')}else yaz('#baglanti','Canlı veri: hata')});
+  mq.on('close',()=>{if(mq)yaz('#baglanti','Canlı veri: bağlantı koptu');etiket()});
 }
-function kes(){if(kalp){clearInterval(kalp);kalp=null;}if(mq){mq.end(true);mq=null;}$('#giris-btn').textContent='Giriş';etiket();}
-function girisDegistir(){
-  if(mq){ if(confirm('Çıkış yapılsın mı? (kayıtlı şifre silinir)')){lsYaz('uzakSifre','');kes();yaz('#baglanti','Bağlantı yok');} }
-  else baglan();
-}
-baglan();
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
-</script>
-</body></html>
+function kes(){if(kalp){clearInterval(kalp);kalp=null}const m=mq;mq=null;if(m)m.end(true);etiket()}
+$('#mform').onsubmit=e=>{e.preventDefault();kes();lsYaz('uzakKullanici',$('#mu').value.trim());lsYaz('uzakSifre',$('#mp').value);baglan();sekme('ana')};
+$('#mcik').onclick=()=>{if(confirm('Kayıtlı MQTT bilgisi silinsin mi? Kalburum ve Ev Lamba sayfaları da yeniden sorar.')){kes();lsSil('uzakSifre');$('#mp').value='';yaz('#baglanti','Canlı veri: giriş yapılmadı')}};
+addEventListener('DOMContentLoaded',basla);
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script></body></html>
