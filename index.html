@@ -78,7 +78,7 @@ ul{padding-left:18px;margin:6px 0;font-size:14px;line-height:1.5}
 <div class="alt"><button class="btn btn-primary" type="submit">Giriş</button></div><div class="hata" id="khata" role="status"></div>
 <div class="meta">Bu cihazda bir kez sorulur.</div></form></section>
 <div id="icerik" hidden>
-<div class="ust"><h1>Projelerim</h1><div class="meta"><div id="baglanti">Canlı veri: giriş yapılmadı</div><div>v2.0.0 • 23.11.2026</div></div></div>
+<div class="ust"><h1>Projelerim</h1><div class="meta"><div id="baglanti">Canlı veri: giriş yapılmadı</div><div>v2.1.0 • 23.11.2026</div></div></div>
 <div class="nav"><button data-s="ana">Projeler</button><button data-s="kod">Kod</button><button data-s="ayar">Ayarlar</button></div>
 <section id="s-ana">
 <h2>Cihazlar</h2><div class="grid" id="cihazlar"></div>
@@ -92,7 +92,7 @@ ul{padding-left:18px;margin:6px 0;font-size:14px;line-height:1.5}
 <div class="alt"><button class="btn" type="submit">Kaydet ve bağlan</button><button class="btn btn-danger" type="button" id="mcik">Kayıtlı bilgiyi sil</button></div></form></div>
 <div class="card"><h3>Cihaz adresleri</h3><div class="meta">IP değişirse buraya yaz. Boş = varsayılan.</div><div id="adres"></div><div class="alt"><button class="btn" id="akaydet">Kaydet</button></div></div>
 <div class="card"><h3>Oturum</h3><div class="meta">Bu cihazdaki kayıtlı girişi siler, şifre yeniden sorulur.</div><div class="alt"><button class="btn btn-danger" id="cikis">Çıkış yap</button></div></div>
-<div class="card"><h3>Bilgi</h3><ul><li>Yeşil: cihaz yanıt veriyor. Kırmızı: cihaz çevrimdışı olduğunu bildirdi. Gri: bilinmiyor ya da bu ağdan ulaşılamadı.</li><li>LED Pano, Sudepo ve Sofya internete durum göndermez; yalnız ev ağında, tarama ile görünür.</li><li>Proje listesi şifreli saklanır, giriş bu cihazda kalır.</li></ul><h3>Sürüm geçmişi</h3><ul><li>2.0.0 (23.11.2026): şifreli giriş, tüm projeler, gerçek cihaz durumu, sekmeler, geniş ekran düzeni.</li><li>1.x: Kalburum, Ev Lamba ve LED Pano kartları.</li></ul></div></section>
+<div class="card"><h3>Bilgi</h3><ul><li>Yeşil: cihaz yanıt veriyor. Kırmızı: cihaz çevrimdışı olduğunu bildirdi. Gri: bilinmiyor ya da bu ağdan ulaşılamadı.</li><li>LED Pano, Sudepo ve Sofya’yı evdeki HUB yoklar; açık/kapalı durumları dışarıdan da görünür (kumanda yalnız ev ağında).</li><li>Proje listesi şifreli saklanır, giriş bu cihazda kalır.</li></ul><h3>Sürüm geçmişi</h3><ul><li>2.1.0 (23.11.2026): LED Pano, Sudepo ve Sofya durumu HUB üzerinden dışarıdan da görünür; ESP yükleyici telefonda kapalı gösterilir.</li><li>2.0.0 (23.11.2026): şifreli giriş, tüm projeler, gerçek cihaz durumu, sekmeler, geniş ekran düzeni.</li><li>1.x: Kalburum, Ev Lamba ve LED Pano kartları.</li></ul></div></section>
 </div></main>
 <script src="https://unpkg.com/mqtt@4.3.7/dist/mqtt.min.js" defer></script>
 <script>
@@ -146,7 +146,7 @@ function ac(){
     $('#adres').append(el('label',{htmlFor:'a-'+c.id,textContent:c.ad}),el('input',{id:'a-'+c.id,value:lsAl('adres_'+c.id)||'',placeholder:c.yerel[0]}));
   });
   const kart=(u,h,a)=>el('a',{className:'card',href:u},el('div',{className:'kbas'},el('b',{textContent:h})),el('div',{className:'meta',textContent:a}));
-  V.uygulamalar.forEach(u=>{const k=kart(u.url,u.ad,u.ac);$('#uygulamalar').append(k);
+  V.uygulamalar.forEach(u=>{const k=kart(u.url,u.ad,u.ac);if(u.pc&&/Android|iPhone|iPad/i.test(navigator.userAgent)){k.removeAttribute('href');k.style.opacity=.55;k.lastChild.textContent='Yalnız bilgisayarda açılır'}$('#uygulamalar').append(k);
     if(u.surum)fetch(u.surum).then(r=>r.json()).then(s=>k.firstChild.append(el('span',{className:'meta',textContent:'v'+(s.versionName||s.surum)}))).catch(()=>{})});
   V.kod.forEach(([d,a])=>$('#kod').append(kart('https://github.com/Nedu41/'+d,d,a)));
   V.pc.forEach(([d,a])=>$('#pc').append(el('div',{className:'card'},el('div',{className:'kbas'},el('b',{textContent:d})),el('div',{className:'meta',textContent:a}))));
@@ -170,7 +170,7 @@ $('#tara').onclick=tara;
 async function otoTara(){for(const n of ['local-network','local-network-access'])try{if((await navigator.permissions.query({name:n})).state==='granted')return tara()}catch(e){}}
 
 // --- Canli veri (MQTT). Kimlik kalburum/ ve ev-lamba/ ile ayni anahtarlarda.
-let mq=null,kalp=null,kSon=0,kOnline=null,hSon=0;
+let mq=null,kalp=null,kSon=0,kOnline=null,hSon=0,agD={};
 // Yalniz sayfa ekrandayken: arka planda kalan sekme bahce kotasini yemesin.
 function izleyici(){if(mq&&mq.connected&&document.visibilityState==='visible')mq.publish('kalburum/izleyici','1')}
 document.addEventListener('visibilitychange',izleyici);
@@ -191,8 +191,13 @@ function etiket(){
   else{led('#l-kalburum',!b?null:kOnline===false?'kotu':(kOnline&&ks!=null&&ks<1200)?'iyi':null);yaz('#d-kalburum',!b?'canlı veri yok':kOnline===false?'çevrimdışı':ks==null?'veri bekleniyor':once(ks))}
   if(evde('hub')){led('#l-hub','iyi');yaz('#d-hub',hs!=null&&hs<600?once(hs):'ev ağında açık')}
   else{led('#l-hub',b&&hs!=null&&hs<600?'iyi':null);yaz('#d-hub',!b?'canlı veri yok':hs==null?'veri bekleniyor':once(hs))}
+  agEtiket(b,hs);
 }
 setInterval(etiket,5000);
+// HUB'in yokladigi cihazlar (evlamba/tatil/durum -> ag). HUB verisi 10 dk'dan eskiyse bilinmiyor.
+function agEtiket(b,hs){V.cihazlar.forEach(c=>{if(c.canli||c.evde)return;const d=agD[c.id],taze=b&&hs!=null&&hs<600;
+  if(d&&taze){led('#l-'+c.id,d.a?'iyi':'kotu');yaz('#d-'+c.id,d.a?'açık (evde)':'evde kapalı')}
+  else{led('#l-'+c.id,null);yaz('#d-'+c.id,c.evde===false?'bu ağdan ulaşılamadı':'bilinmiyor')}})}
 function baglan(){
   const u=lsAl('uzakKullanici'),p=lsAl('uzakSifre');
   if(!u||!p){yaz('#baglanti','Canlı veri: Ayarlar’dan giriş yap');return etiket()}
@@ -203,7 +208,7 @@ function baglan(){
   mq.on('message',(t,m,pk)=>{const s=m.toString();
     if(t==='kalburum/online')kOnline=s==='1';
     else if(t==='kalburum/durum'){if(!pk.retain)kSon=Date.now();try{kalburumIsle(JSON.parse(s))}catch(e){}}
-    else if(t==='evlamba/tatil/durum'){if(!pk.retain)hSon=Date.now();try{const d=JSON.parse(s);if(d.ip&&/^[\d.]+$/.test(d.ip)){lsYaz('hubIp',d.ip);const c=V.cihazlar.find(x=>x.id==='hub'),y=$('#y-hub');if(c&&y&&!c.evde)y.href=kok(c,adresler(c)[0])}}catch(e){}}
+    else if(t==='evlamba/tatil/durum'){try{const d=JSON.parse(s);hSon=d.zaman>1e9?Math.min(d.zaman*1000,Date.now()):pk.retain?hSon:Date.now();agD=d.ag||{};for(const c of V.cihazlar){const g=agD[c.id],y=$('#y-'+c.id);if(g&&g.a&&/^[\d.]+$/.test(g.ip||'')&&y&&!c.evde&&!lsAl('adres_'+c.id))y.href=kok(c,g.ip)}if(d.ip&&/^[\d.]+$/.test(d.ip)){lsYaz('hubIp',d.ip);const c=V.cihazlar.find(x=>x.id==='hub'),y=$('#y-hub');if(c&&y&&!c.evde)y.href=kok(c,adresler(c)[0])}}catch(e){}}
     etiket()});
   mq.on('error',e=>{const m=String(e&&e.message||e);if(/auth|Bad user/i.test(m)){lsSil('uzakSifre');kes();yaz('#baglanti','Canlı veri: giriş reddedildi')}else yaz('#baglanti','Canlı veri: hata')});
   mq.on('close',()=>{if(mq)yaz('#baglanti','Canlı veri: bağlantı koptu');etiket()});
